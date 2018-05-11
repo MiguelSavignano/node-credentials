@@ -1,0 +1,19 @@
+{
+  "name": "node-encrypted-secrets",
+  "version": "0.1.0",
+  "description": "Encrypted json for manage all secrets, similar to rails encrypted secrets",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run"
+  },
+  "keywords": [
+    "secrets",
+    "encrypted",
+    "env"
+  ],
+  "author": "migue.masx@gmail.com",
+  "license": "MIT",
+  "dependencies": {
+    "crypto": "^1.0.1"
+  }
+}
