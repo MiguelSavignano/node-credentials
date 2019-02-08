@@ -4,7 +4,7 @@
   "description": "Encrypted json for manage all secrets, similar to rails encrypted secrets",
   "main": "index.js",
   "scripts": {
-    "test": "npm run"
+    "test": "jest"
   },
   "keywords": [
     "secrets",
