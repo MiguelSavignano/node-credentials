@@ -11,7 +11,7 @@ const editCredentials = ({
   keyPath = "credentials.json.key",
   outPath = "credentials.json"
 } = {}) => {
-  const credentials = core.decrypt(encryptedFilePath, keyPath);
+  const credentials = core.decrypt({ encryptedFilePath, keyPath });
   fs.writeFileSync(outPath, JSON.stringify(credentials), "utf8");
   return outPath;
 };

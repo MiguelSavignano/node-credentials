@@ -24,26 +24,32 @@ const encrypt = (json, callback) => {
   });
 };
 
-const decrypt = (
+const decrypt = ({
   encryptedFilePath = "credentials.json.enc",
-  keyPath = "credentials.json.key"
-) => {
+  keyPath = "credentials.json.key",
+  keyValue = process.env.NODE_MASTER_KEY
+} = {}) => {
+  const key = keyValue || fs.readFileSync(keyPath, "utf8").trim();
+  const credentialsEnryptedText = fs.readFileSync(encryptedFilePath, "utf8");
+  const decryptCredentials = decryptString(key, credentialsEnryptedText);
+  const credentials = JSON.parse(decryptCredentials);
+  return credentials;
+};
+exports.decrypt = decrypt;
+
+const decryptString = (keyValue, text) => {
   const algorithm = "aes-256-cbc";
-  const cipher = fs.readFileSync(encryptedFilePath, "utf8");
-  const key =
-    process.env.NODE_MASTER_KEY || fs.readFileSync(keyPath, "utf8").trim();
-  var parts = cipher.split("--", 2);
+  var parts = text.split("--", 2);
   var ciphertext = new Buffer(parts[0], "base64");
   var iv = new Buffer(parts[1], "base64");
 
-  var decipher = crypto.createDecipheriv(algorithm, key, iv);
+  var decipher = crypto.createDecipheriv(algorithm, keyValue, iv);
   var plaintext = "";
   plaintext += decipher.update(ciphertext);
   plaintext += decipher.final();
-  const secrets = JSON.parse(plaintext);
-  return secrets;
+  return plaintext;
 };
-exports.decrypt = decrypt;
+exports.decryptString = decryptString;
 
 const newKey = () => {
   return crypto.randomBytes(16).toString("hex");
