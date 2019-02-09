@@ -1,24 +1,24 @@
 var crypto = require("crypto");
 var fs = require("fs");
 
-const encrypt = (key, text, callback) => {
-  const algorithm = "aes-256-cbc";
-  crypto.randomBytes(16, (err, iv) => {
-    if (err) return callback(err);
+const encrypt = (key, text) =>
+  new Promise((resolve, reject) => {
+    const algorithm = "aes-256-cbc";
+    crypto.randomBytes(16, (err, iv) => {
+      if (err) return reject(err);
+      var cipher = crypto.createCipheriv(algorithm, key, iv);
+      var ciphertext = "";
+      ciphertext += cipher.update(text, "utf-8", "binary");
+      ciphertext += cipher.final("binary");
+      ciphertext = new Buffer(ciphertext, "binary");
+      var cipherBundle = [
+        ciphertext.toString("base64"),
+        iv.toString("base64")
+      ].join("--");
 
-    var cipher = crypto.createCipheriv(algorithm, key, iv);
-    var ciphertext = "";
-    ciphertext += cipher.update(text, "utf-8", "binary");
-    ciphertext += cipher.final("binary");
-    ciphertext = new Buffer(ciphertext, "binary");
-    var cipherBundle = [
-      ciphertext.toString("base64"),
-      iv.toString("base64")
-    ].join("--");
-
-    callback(null, cipherBundle);
+      resolve(cipherBundle);
+    });
   });
-};
 exports.encrypt = encrypt;
 
 const decrypt = (key, text) => {
