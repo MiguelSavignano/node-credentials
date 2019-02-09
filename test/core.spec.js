@@ -7,7 +7,6 @@ describe("core", () => {
   let credentialsString = JSON.stringify(credentials);
   test("encrypt", async () => {
     const result = await core.encrypt(NODE_MASTER_KEY, credentialsString);
-    console.log(result);
     expect(result).validEncrypted();
   });
 
