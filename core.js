@@ -24,8 +24,8 @@ exports.encrypt = encrypt;
 const decrypt = (key, text) => {
   const algorithm = "aes-256-cbc";
   var parts = text.split("--", 2);
-  var ciphertext = new Buffer(parts[0], "base64");
-  var iv = new Buffer(parts[1], "base64");
+  var ciphertext = new Buffer.from(parts[0], "base64");
+  var iv = new Buffer.from(parts[1], "base64");
 
   var decipher = crypto.createDecipheriv(algorithm, key, iv);
   var plaintext = "";

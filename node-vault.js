@@ -33,13 +33,22 @@ const editCredentials = ({
 };
 exports.editCredentials = editCredentials;
 
-// const decrypt = ({
-//   encryptedFilePath = "credentials.json.enc",
-//   keyPath = "credentials.json.key",
-//   outPath = "credentials.json"
-// } = {}) => {
-//   const credentials = core.decrypt(keyPath, encryptedFilePath);
-//   fs.writeFileSync(outPath, JSON.stringify(credentials), "utf8");
-//   return outPath;
-// };
-// module.exports.decrypt = decrypt;
+class Vault {
+  constructor() {
+    this.credentials = {};
+  }
+
+  config({
+    credentialsFilePath = "credentials.json",
+    keyPath = "credentials.json.key",
+    keyValue = process.env.NODE_MASTER_KEY
+  } = {}) {
+    const key = keyValue || fs.readFileSync(keyPath, "utf8").trim();
+    const text = fs.readFileSync(`${credentialsFilePath}.enc`, "utf8");
+    const credentialsText = core.decrypt(key, text);
+    const credentials = JSON.parse(credentialsText);
+    this.credentials = { ...credentials };
+    return credentials;
+  }
+}
+exports.vault = new Vault();
