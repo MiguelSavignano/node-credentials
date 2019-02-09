@@ -34,7 +34,8 @@ const editCredentials = ({
 exports.editCredentials = editCredentials;
 
 class Vault {
-  constructor() {
+  constructor(decryptFnc) {
+    this.decryptFnc = decryptFnc;
     this.credentials = {};
   }
 
@@ -45,10 +46,11 @@ class Vault {
   } = {}) {
     const key = keyValue || fs.readFileSync(keyPath, "utf8").trim();
     const text = fs.readFileSync(`${credentialsFilePath}.enc`, "utf8");
-    const credentialsText = core.decrypt(key, text);
+    const credentialsText = this.decryptFnc(key, text);
     const credentials = JSON.parse(credentialsText);
     this.credentials = { ...credentials };
     return credentials;
   }
 }
-exports.vault = new Vault();
+exports.Vault = Vault;
+exports.vault = new Vault(core.decrypt);
