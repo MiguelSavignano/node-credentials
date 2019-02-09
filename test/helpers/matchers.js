@@ -20,3 +20,12 @@ expect.extend({
     };
   }
 });
+
+expect.extend({
+  async fileContains(filePath, fileText) {
+    return {
+      pass: fileText == fs.readFileSync(filePath, "utf8"),
+      message: () => "valid file"
+    };
+  }
+});

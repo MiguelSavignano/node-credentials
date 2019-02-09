@@ -21,25 +21,25 @@ const encrypt = async ({
 exports.encrypt = encrypt;
 
 const editCredentials = ({
-  encryptedFilePath = "credentials.json.enc",
+  credentialsFilePath = "credentials.json",
   keyPath = "credentials.json.key",
   keyValue = process.env.NODE_MASTER_KEY
 } = {}) => {
   const key = keyValue || fs.readFileSync(keyPath, "utf8").trim();
-  const credentialsEnryptedText = fs.readFileSync(encryptedFilePath, "utf8");
-  const decryptCredentials = core.decrypt(key, credentialsEnryptedText);
-  const credentials = JSON.parse(decryptCredentials);
-  return credentials;
+  const text = fs.readFileSync(`${credentialsFilePath}.enc`, "utf8");
+  const decryptCredentials = core.decrypt(key, text);
+  fs.writeFileSync(`${credentialsFilePath}`, decryptCredentials, "utf8");
+  return credentialsFilePath;
 };
 exports.editCredentials = editCredentials;
 
-const decrypt = ({
-  encryptedFilePath = "credentials.json.enc",
-  keyPath = "credentials.json.key",
-  outPath = "credentials.json"
-} = {}) => {
-  const credentials = core.decrypt(keyPath, encryptedFilePath);
-  fs.writeFileSync(outPath, JSON.stringify(credentials), "utf8");
-  return outPath;
-};
-module.exports.decrypt = decrypt;
+// const decrypt = ({
+//   encryptedFilePath = "credentials.json.enc",
+//   keyPath = "credentials.json.key",
+//   outPath = "credentials.json"
+// } = {}) => {
+//   const credentials = core.decrypt(keyPath, encryptedFilePath);
+//   fs.writeFileSync(outPath, JSON.stringify(credentials), "utf8");
+//   return outPath;
+// };
+// module.exports.decrypt = decrypt;
