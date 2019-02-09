@@ -15,6 +15,6 @@ describe("core", () => {
       NODE_MASTER_KEY,
       "dwAhexc3PhUrX9i4gutpy6Hb8endKm7hMCQALPspYEc=--84X822lxzoPbO9Jh2knEGA=="
     );
-    expect(result).validEncrypted();
+    expect(JSON.parse(result)).toEqual(credentials);
   });
 });

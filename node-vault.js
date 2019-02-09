@@ -1,56 +1,55 @@
 const core = require("./core");
 var fs = require("fs");
 
-const createNewKey = (path = "./credentials.json.key") => {
-  fs.writeFileSync(path, core.newKey());
-};
-module.exports.createNewKey = createNewKey;
-
-const encrypt = async ({
-  credentialsFilePath = "credentials.json",
-  keyValue = process.env.NODE_MASTER_KEY
-} = {}) => {
-  const key =
-    keyValue || fs.readFileSync(`${credentialsFilePath}.key`, "utf8").trim();
-  const text = fs.readFileSync(credentialsFilePath, "utf8").trim();
-  const cipherBundle = await core.encrypt(key, text);
-  fs.writeFileSync(`${credentialsFilePath}.enc`, cipherBundle);
-  return `${credentialsFilePath}.enc`;
-};
-
-exports.encrypt = encrypt;
-
-const editCredentials = ({
-  credentialsFilePath = "credentials.json",
-  keyPath = "credentials.json.key",
-  keyValue = process.env.NODE_MASTER_KEY
-} = {}) => {
-  const key = keyValue || fs.readFileSync(keyPath, "utf8").trim();
-  const text = fs.readFileSync(`${credentialsFilePath}.enc`, "utf8");
-  const decryptCredentials = core.decrypt(key, text);
-  fs.writeFileSync(`${credentialsFilePath}`, decryptCredentials, "utf8");
-  return credentialsFilePath;
-};
-exports.editCredentials = editCredentials;
-
 class Vault {
-  constructor(decryptFnc) {
+  constructor({
+    decryptFnc = core.decrypt,
+    encryptFnc = core.encrypt,
+    credentialsFilePath = "credentials.json"
+  } = {}) {
     this.decryptFnc = decryptFnc;
+    this.encryptFnc = encryptFnc;
+    this.credentialsFilePath = credentialsFilePath;
     this.credentials = {};
   }
 
-  config({
-    credentialsFilePath = "credentials.json",
-    keyPath = "credentials.json.key",
-    keyValue = process.env.NODE_MASTER_KEY
-  } = {}) {
-    const key = keyValue || fs.readFileSync(keyPath, "utf8").trim();
-    const text = fs.readFileSync(`${credentialsFilePath}.enc`, "utf8");
+  config({ keyValue } = {}) {
+    const key = keyValue || this.getMasterKey();
+    const text = fs.readFileSync(`${this.credentialsFilePath}.enc`, "utf8");
     const credentialsText = this.decryptFnc(key, text);
     const credentials = JSON.parse(credentialsText);
     this.credentials = { ...credentials };
     return credentials;
   }
+
+  async encryptFile({ keyValue } = {}) {
+    const key = keyValue || this.getMasterKey();
+    const text = fs.readFileSync(this.credentialsFilePath, "utf8").trim();
+    const cipherBundle = await this.encryptFnc(key, text);
+    fs.writeFileSync(`${this.credentialsFilePath}.enc`, cipherBundle);
+    return `${this.credentialsFilePath}.enc`;
+  }
+
+  editCredentials({ keyValue } = {}) {
+    const key = keyValue || this.getMasterKey();
+    const text = fs.readFileSync(`${this.credentialsFilePath}.enc`, "utf8");
+    const decryptCredentials = this.decryptFnc(key, text);
+    fs.writeFileSync(`${this.credentialsFilePath}`, decryptCredentials, "utf8");
+    return this.credentialsFilePath;
+  }
+
+  createNewKey() {
+    const newKey = core.newKey();
+    fs.writeFileSync(`${this.credentialsFilePath}.key`, newKey);
+    return newKey;
+  }
+
+  getMasterKey() {
+    return (
+      process.env.NODE_MASTER_KEY ||
+      fs.readFileSync(`${this.credentialsFilePath}.key`, "utf8").trim()
+    );
+  }
 }
 exports.Vault = Vault;
-exports.vault = new Vault(core.decrypt);
+exports.vault = new Vault();
