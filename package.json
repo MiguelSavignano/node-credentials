@@ -14,6 +14,7 @@
   "author": "migue.masx@gmail.com",
   "license": "MIT",
   "dependencies": {
+    "command-line-args": "^5.0.2",
     "crypto": "^1.0.1"
   }
 }
