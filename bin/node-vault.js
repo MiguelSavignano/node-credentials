@@ -1,6 +1,7 @@
 #! /usr/bin/env node
-const commandLineArgs = require("command-line-args");
 const fs = require("fs");
+const commandLineArgs = require("command-line-args");
+const commandLineUsage = require("command-line-usage");
 const Vault = require("../src/node-vault").Vault;
 const mainDefinitions = [{ name: "command", defaultOption: true }];
 const mainOptions = commandLineArgs(mainDefinitions, {
@@ -48,7 +49,32 @@ const init = () => {
 };
 
 const help = () => {
-  console.log("help");
+  const sections = [
+    {
+      header: "node-vault",
+      content: "encrypted your credentials"
+    },
+    {
+      header: "Synopsis",
+      content: "node-vault <command> <options>"
+    },
+    {
+      header: "Command List",
+      content: [
+        { name: "help", summary: "help" },
+        {
+          name: "init",
+          summary:
+            "create credentials.json.key and encrypt your credentials.json"
+        },
+        { name: "encrypt", summary: "encrypt credentials.json" },
+        { name: "decrypt", summary: "decrypt credentials.json.enc" },
+        { name: "edit", summary: "decrypt alias" }
+      ]
+    }
+  ];
+  const usage = commandLineUsage(sections);
+  console.log(usage);
 };
 
 const commandCase = { encrypt, edit, decrypt: edit, init, help };
