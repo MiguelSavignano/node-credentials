@@ -1,13 +1,5 @@
 const core = require("../core");
-
-expect.extend({
-  async validEncrypted(value) {
-    return {
-      pass: value.length === 70,
-      message: () => "valid encrypted"
-    };
-  }
-});
+require("./helpers/matchers");
 
 describe("core", () => {
   let NODE_MASTER_KEY = "8aa93853b3ff01c5b5447529a9c33cb9";

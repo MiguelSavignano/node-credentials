@@ -6,23 +6,18 @@ const createNewKey = (path = "./credentials.json.key") => {
 };
 module.exports.createNewKey = createNewKey;
 
-const encrypt = ({
+const encrypt = async ({
   credentialsFilePath = "credentials.json",
-  encryptedFilePath = "credentials.json.enc",
-  keyPath = "credentials.json.key",
   keyValue = process.env.NODE_MASTER_KEY
-} = {}) =>
-  new Promise((resolve, reject) => {
-    const key = keyValue || fs.readFileSync(keyPath, "utf8").trim();
-    const text = fs.readFileSync(credentialsFilePath, "utf8").trim();
-    core.encrypt(key, text, (err, cipherBundle) => {
-      if (err) {
-        reject(err);
-      }
-      fs.writeFileSync(encryptedFilePath, cipherBundle);
-      resolve(encryptedFilePath);
-    });
-  });
+} = {}) => {
+  const key =
+    keyValue || fs.readFileSync(`${credentialsFilePath}.key`, "utf8").trim();
+  const text = fs.readFileSync(credentialsFilePath, "utf8").trim();
+  const cipherBundle = await core.encrypt(key, text);
+  fs.writeFileSync(`${credentialsFilePath}.enc`, cipherBundle);
+  return `${credentialsFilePath}.enc`;
+};
+
 exports.encrypt = encrypt;
 
 const editCredentials = ({
