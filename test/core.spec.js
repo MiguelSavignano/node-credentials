@@ -1,4 +1,4 @@
-const core = require("../core");
+const core = require("../src/core");
 require("./helpers/matchers");
 
 describe("core", () => {

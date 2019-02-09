@@ -1,5 +1,5 @@
 var fs = require("fs");
-const Vault = require("../node-vault").Vault;
+const Vault = require("../src/node-vault").Vault;
 require("./helpers/matchers");
 let NODE_MASTER_KEY = "8aa93853b3ff01c5b5447529a9c33cb9";
 
