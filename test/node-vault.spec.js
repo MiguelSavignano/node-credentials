@@ -2,6 +2,9 @@ var fs = require("fs");
 const Vault = require("../src/node-vault").Vault;
 require("./helpers/matchers");
 let NODE_MASTER_KEY = "8aa93853b3ff01c5b5447529a9c33cb9";
+const MY_ENV_CREDENTIAL = "MY_ENV_CREDENTIAL";
+
+process.env.ENV_CREDENTIAL = MY_ENV_CREDENTIAL;
 
 describe("node-vault", () => {
   let credentialsFilePath = __dirname + "/examples/encrypt/credentials.json";
@@ -32,7 +35,12 @@ describe("node-vault", () => {
     const result = vault.editCredentials({
       keyValue: NODE_MASTER_KEY
     });
-    expect(result).fileContains(JSON.stringify({ my_key: "password" }));
+    const fileText = fs.readFileSync(result, "utf8");
+
+    expect(JSON.parse(fileText)).toEqual({
+      my_key: "password",
+      my_key_env: "<%= process.env.ENV_CREDENTIAL %>"
+    });
   });
 });
 
@@ -44,6 +52,9 @@ describe("node-vault config", () => {
     vault.config({
       keyValue: NODE_MASTER_KEY
     });
-    expect(vault.credentials).toEqual({ my_key: "password" });
+    expect(vault.credentials).toEqual({
+      my_key: "password",
+      my_key_env: "MY_ENV_CREDENTIAL"
+    });
   });
 });

@@ -31,9 +31,11 @@ expect.extend({
 
 expect.extend({
   async fileContains(filePath, fileText) {
+    const pass = fileText === fs.readFileSync(filePath, "utf8");
+
     return {
-      pass: fileText == fs.readFileSync(filePath, "utf8"),
-      message: () => "valid file"
+      pass: pass,
+      message: () => (pass ? `valid file` : `invalid contains ${fileText}`)
     };
   }
 });
