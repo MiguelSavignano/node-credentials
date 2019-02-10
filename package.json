@@ -1,6 +1,6 @@
 {
   "name": "node-encrypted-secrets",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Encrypted json for manage all credentials, similar to rails encrypted secrets",
   "main": "src/index.js",
   "bin": "bin/node-secrets.js",
