@@ -53,5 +53,4 @@ class Vault {
     );
   }
 }
-exports.Vault = Vault;
-exports.vault = new Vault();
+module.exports.Vault = Vault;
