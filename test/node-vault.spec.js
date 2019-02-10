@@ -2,40 +2,47 @@ var fs = require("fs");
 const Vault = require("../src/node-vault").Vault;
 require("./helpers/matchers");
 let NODE_MASTER_KEY = "8aa93853b3ff01c5b5447529a9c33cb9";
-process.env.ENV_CREDENTIAL = "MY_ENV_CREDENTIAL";
+const MY_ENV_CREDENTIAL = "MY_ENV_CREDENTIAL";
 
-// describe("node-vault", () => {
-//   let credentialsFilePath = __dirname + "/examples/encrypt/credentials.json";
+process.env.ENV_CREDENTIAL = MY_ENV_CREDENTIAL;
 
-//   afterEach(() => {
-//     fs.unlinkSync(`${credentialsFilePath}.enc`);
-//   });
+describe("node-vault", () => {
+  let credentialsFilePath = __dirname + "/examples/encrypt/credentials.json";
 
-//   test("encryptFile", async () => {
-//     const vault = new Vault({ credentialsFilePath });
+  afterEach(() => {
+    fs.unlinkSync(`${credentialsFilePath}.enc`);
+  });
 
-//     expect(
-//       await vault.encryptFile({
-//         keyValue: NODE_MASTER_KEY
-//       })
-//     ).validEncryptedFile();
-//   });
-// });
+  test("encryptFile", async () => {
+    const vault = new Vault({ credentialsFilePath });
 
-// describe("node-vault", () => {
-//   let credentialsFilePath = __dirname + "/examples/decrypt/credentials.json";
+    expect(
+      await vault.encryptFile({
+        keyValue: NODE_MASTER_KEY
+      })
+    ).validEncryptedFile();
+  });
+});
 
-//   // afterEach(() => {
-//   //   fs.unlinkSync(`${credentialsFilePath}`);
-//   // });
-//   test("editCredentials", () => {
-//     const vault = new Vault({ credentialsFilePath });
-//     const result = vault.editCredentials({
-//       keyValue: NODE_MASTER_KEY
-//     });
-//     expect(result).fileContains(JSON.stringify({ my_key: "password" }));
-//   });
-// });
+describe("node-vault", () => {
+  let credentialsFilePath = __dirname + "/examples/decrypt/credentials.json";
+
+  afterEach(() => {
+    fs.unlinkSync(`${credentialsFilePath}`);
+  });
+  test("editCredentials", () => {
+    const vault = new Vault({ credentialsFilePath });
+    const result = vault.editCredentials({
+      keyValue: NODE_MASTER_KEY
+    });
+    const fileText = fs.readFileSync(result, "utf8");
+
+    expect(JSON.parse(fileText)).toEqual({
+      my_key: "password",
+      my_key_env: "<%= process.env.ENV_CREDENTIAL %>"
+    });
+  });
+});
 
 describe("node-vault config", () => {
   let credentialsFilePath = __dirname + "/examples/decrypt/credentials.json";
@@ -45,6 +52,9 @@ describe("node-vault config", () => {
     vault.config({
       keyValue: NODE_MASTER_KEY
     });
-    expect(vault.credentials).toEqual({ my_key: "password" });
+    expect(vault.credentials).toEqual({
+      my_key: "password",
+      my_key_env: "MY_ENV_CREDENTIAL"
+    });
   });
 });
