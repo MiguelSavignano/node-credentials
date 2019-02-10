@@ -3,11 +3,6 @@ const fs = require("fs");
 const commandLineArgs = require("command-line-args");
 const commandLineUsage = require("command-line-usage");
 const Vault = require("../src/node-vault").Vault;
-const mainDefinitions = [{ name: "command", defaultOption: true }];
-const mainOptions = commandLineArgs(mainDefinitions, {
-  stopAtFirstUnknown: true
-});
-const argv = mainOptions._unknown || [];
 
 const encrypt = options => {
   const vault = new Vault();
@@ -77,14 +72,17 @@ const help = () => {
   console.log(usage);
 };
 
+const getCommand = () => {
+  const mainDefinitions = [{ name: "command", defaultOption: true }];
+  const mainOptions = commandLineArgs(mainDefinitions, {
+    stopAtFirstUnknown: true
+  });
+  // command argument
+  return mainOptions.command;
+};
+const command = getCommand();
+const uknowFnc = () => console.log("invalid command");
 const commandCase = { encrypt, edit, decrypt: edit, init, help };
 
-const optionsCase = {
-  encrypt: [{ name: "--out", type: String }]
-};
-
-const command = mainOptions.command;
-const options = commandLineArgs(optionsCase[command], { argv });
-const uknowFnc = () => console.log("invalid command");
 const commandFnc = commandCase[command] || uknowFnc;
-commandFnc(options);
+commandFnc();
