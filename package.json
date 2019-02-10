@@ -17,6 +17,10 @@
   "dependencies": {
     "command-line-args": "^5.0.2",
     "command-line-usage": "^5.0.5",
-    "crypto": "^1.0.1"
+    "crypto": "^1.0.1",
+    "ejs": "^2.6.1"
+  },
+  "devDependencies": {
+    "jest": "^24.1.0"
   }
 }
