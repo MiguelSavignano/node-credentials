@@ -2,7 +2,7 @@
 const fs = require("fs");
 const commandLineArgs = require("command-line-args");
 const commandLineUsage = require("command-line-usage");
-const Vault = require("../src/node-vault").Vault;
+const Vault = require("../src/vault").Vault;
 
 const encrypt = options => {
   const vault = new Vault();
