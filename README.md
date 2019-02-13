@@ -1,5 +1,7 @@
 # Node encrypted secrets
 
+[![CircleCI](https://circleci.com/gh/MiguelSavignano/node-credentias.svg?style=svg)](https://circleci.com/gh/MiguelSavignano/node-credentias)
+
 Manage your secrets with single entrypted file.
 Inspired in [Rails encrypted secrets management](https://rubyinrails.com/2018/02/24/rails-5-1-encrypted-secrets-management-feature/)
 
