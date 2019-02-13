@@ -65,7 +65,6 @@ const help = () => {
             "create credentials.json.key and encrypt your credentials.json"
         },
         { name: "encrypt", summary: "encrypt credentials.json" },
-        { name: "decrypt", summary: "decrypt credentials.json.enc" },
         { name: "edit", summary: "decrypt alias" }
       ]
     }
