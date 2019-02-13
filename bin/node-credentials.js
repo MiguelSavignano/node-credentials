@@ -4,7 +4,10 @@ const commandLineArgs = require("command-line-args");
 const commandLineUsage = require("command-line-usage");
 const Vault = require("../src/vault").Vault;
 
-const encrypt = options => {
+const encrypt = ({ path }) => {
+  const vault = new Vault({
+    credentialsFilePath: `${path}/credentials.json`
+  });
   const vault = new Vault();
   if (fs.existsSync(`${vault.credentialsFilePath}.key`)) {
     vault.encryptFile();
@@ -16,7 +19,10 @@ const encrypt = options => {
   }
 };
 
-const edit = () => {
+const edit = ({ path }) => {
+  const vault = new Vault({
+    credentialsFilePath: `${path}/credentials.json`
+  });
   const vault = new Vault();
   if (!fs.existsSync(`${vault.credentialsFilePath}.enc`)) {
     console.log("Error credentials.json.enc not exists");
@@ -26,8 +32,8 @@ const edit = () => {
   }
 };
 
-const init = () => {
-  const vault = new Vault();
+const init = ({ path }) => {
+  const vault = new Vault({ credentialsFilePath: `${path}/credentials.json` });
   if (fs.existsSync(`${vault.credentialsFilePath}.enc`)) {
     console.log(
       "Warning credentials.json.enc exists, ensure decrypt file before generate new key"
@@ -72,17 +78,23 @@ const help = () => {
   console.log(usage);
 };
 
-const getCommand = () => {
+const parseCommand = () => {
   const mainDefinitions = [{ name: "command", defaultOption: true }];
   const mainOptions = commandLineArgs(mainDefinitions, {
     stopAtFirstUnknown: true
   });
-  // command argument
-  return mainOptions.command;
+  const argv = mainOptions._unknown || [];
+  const globalOptions = [{ name: "path", type: String }];
+  const options = commandLineArgs(globalOptions, { argv });
+  return {
+    command: mainOptions.command,
+    options: options || {}
+  };
 };
-const command = getCommand();
+
+const { command, options } = parseCommand();
 const uknowFnc = () => console.log("invalid command");
 const commandCase = { encrypt, edit, decrypt: edit, init, help };
 
 const commandFnc = commandCase[command] || uknowFnc;
-commandFnc();
+commandFnc(options);
