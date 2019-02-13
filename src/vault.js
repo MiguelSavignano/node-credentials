@@ -14,7 +14,10 @@ class Vault {
     this.credentials = {};
   }
 
-  config({ keyValue } = {}) {
+  config({ keyValue, path } = {}) {
+    if (path) {
+      this.credentialsFilePath = `${path}/credentials.json`;
+    }
     const key = keyValue || this.getMasterKey();
     const text = fs.readFileSync(`${this.credentialsFilePath}.enc`, "utf8");
     const credentialsText = this.decryptFnc(key, text);
