@@ -6,17 +6,24 @@ Inspired in [Rails encrypted secrets management](https://rubyinrails.com/2018/02
 ## Install
 
 ```
-npm install node-encrypted-secrets --save
+npm install node-credentials --save
 ```
 
 ## Usage
 
 Create a credentials.json file
 
+```
+{
+  "my_api_key": "api_key",
+  "my_api_secret": "api_secret"
+}
+```
+
 ### Setup
 
 ```
-npx node-secrets init
+npx node-credentials init
 ```
 
 Your credentials.json it's encrypted, and generate credentials.json.key
@@ -24,7 +31,7 @@ Your credentials.json it's encrypted, and generate credentials.json.key
 Save the key value, and ignore this file in your version control.
 
 ```
-echo credentisl.json.key > .gitignore
+echo credentias.json.key > .gitignore
 ```
 
 ### Use credentials
@@ -32,16 +39,16 @@ echo credentisl.json.key > .gitignore
 - Load credentials in your main.js
 
 ```js
-const vault = require("node-encrypted-secrets");
+const vault = require("node-credentials");
 vault.config();
 ```
 
 - Read credentials
 
 ```js
-const credentials = require("node-encrypted-secrets").credentials;
+const credentials = require("node-credentials").credentials;
 
-const databasePasswod = credentials.db.password;
+const databasePassword = credentials.db.password;
 ```
 
 ### Use in production
@@ -54,16 +61,16 @@ NODE_MASTER_KEY=my-credential-key server.js
 
 ### Edit credentials
 
-For chage your credentials.json.enc you can decrypt and encrypt using the cli
+For chage your credentials.json.enc you can decrypt and encrypt using the CLI
 
 - Decrypt
 
 ```
-npx node-secrets edit
+npx node-credentials edit
 ```
 
 - Encrypt
 
 ```
-npx node-secrets encrypt
+npx node-credentials encrypt
 ```
