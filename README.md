@@ -76,3 +76,22 @@ npx node-credentials edit
 ```
 npx node-credentials encrypt
 ```
+
+## API
+
+### config
+
+| Argument | Type   | Description                              |
+| -------- | ------ | ---------------------------------------- |
+| keyValue | String | MASTER_KEY value for decrypt credentials |
+| path     | String | file path for credentials.json           |
+
+### credentials
+
+Return the value of credentials
+
+### CLI
+
+```
+npx node-credentials help
+```
