@@ -67,6 +67,12 @@ const help = () => {
         { name: "encrypt", summary: "encrypt credentials.json" },
         { name: "edit", summary: "decrypt alias" }
       ]
+    },
+    {
+      header: "Options",
+      content: [
+        { name: "-p, --path", summary: "Path for credentials.json file" }
+      ]
     }
   ];
   const usage = commandLineUsage(sections);
