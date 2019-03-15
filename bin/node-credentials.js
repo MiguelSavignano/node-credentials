@@ -2,6 +2,8 @@
 const cli = require("../src/cli");
 const commandLineArgs = require("command-line-args");
 
+const defaultOptions = { path: "." };
+
 const parseCommand = () => {
   const mainDefinitions = [{ name: "command", defaultOption: true }];
   const mainOptions = commandLineArgs(mainDefinitions, {
@@ -12,7 +14,7 @@ const parseCommand = () => {
   const options = commandLineArgs(globalOptions, { argv });
   return {
     command: mainOptions.command,
-    options: options || {}
+    options: options || defaultOptions
   };
 };
 
