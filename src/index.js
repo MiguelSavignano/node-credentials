@@ -1,4 +1,6 @@
 const Vault = require("./vault").Vault;
+const vault = new Vault({ nodeEnv: process.env.NODE_ENV });
 
-module.exports = new Vault();
-module.exports.default = new Vault();
+module.exports = vault;
+module.exports.default = vault;
+module.exports.Vault = Vault;
