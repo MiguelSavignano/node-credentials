@@ -27,7 +27,10 @@ const encrypt = ({ path }) => {
   const vault = new Vault({
     credentialsFilePath: `${path}/credentials.json`
   });
-  if (fs.existsSync(`${vault.credentialsFilePath}.key`)) {
+  if (
+    fs.existsSync(`${vault.credentialsFilePath}.key`) ||
+    process.env.NODE_MASTER_KEY
+  ) {
     vault
       .encryptFile()
       .then(() => {
