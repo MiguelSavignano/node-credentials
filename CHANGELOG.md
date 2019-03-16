@@ -1,3 +1,7 @@
+### v0.2.0
+
+- credentialsEnv read credentials based on the Node environment varaible.
+
 ### v0.1.4
 
 - Fixed CLI bugs

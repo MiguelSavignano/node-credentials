@@ -55,7 +55,7 @@ const databasePassword = credentials.db.password;
 
 ### Use in production
 
-You cat set a enviroment varible NODE_MASTER_KEY for decrypt secrets.
+You cat set a environment varible NODE_MASTER_KEY for decrypt secrets.
 
 ```
 NODE_MASTER_KEY=my-credential-key server.js
