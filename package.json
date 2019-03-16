@@ -7,7 +7,7 @@
   "scripts": {
     "test": "jest"
   },
-  "repository": "https://github.com/MiguelSavignano/node-credentias",
+  "repository": "https://github.com/MiguelSavignano/node-credentials",
   "keywords": [
     "secrets",
     "encrypted",
