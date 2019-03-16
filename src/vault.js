@@ -6,12 +6,20 @@ class Vault {
   constructor({
     decryptFnc = core.decrypt,
     encryptFnc = core.encrypt,
-    credentialsFilePath = "credentials.json"
+    credentialsFilePath = "credentials.json",
+    nodeEnv = "development"
   } = {}) {
     this.decryptFnc = decryptFnc;
     this.encryptFnc = encryptFnc;
     this.credentialsFilePath = credentialsFilePath;
     this.credentials = {};
+    this.credentialsEnv = {};
+    this.nodeEnv = nodeEnv === "" ? "development" : nodeEnv;
+  }
+
+  setCredentials(credentials) {
+    this.credentials = { ...credentials };
+    this.credentialsEnv = { ...credentials[this.nodeEnv] };
   }
 
   config({ keyValue, path } = {}) {
@@ -23,7 +31,7 @@ class Vault {
     const credentialsText = this.decryptFnc(key, text);
     const credentialsTextRendered = render(credentialsText);
     const credentials = JSON.parse(credentialsTextRendered);
-    this.credentials = { ...credentials };
+    this.setCredentials(credentials);
     return credentials;
   }
 

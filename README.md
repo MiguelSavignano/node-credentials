@@ -48,7 +48,7 @@ vault.config();
 - Read credentials
 
 ```js
-const credentials = require("node-credentials").credentials;
+const { credentials } = require("node-credentials");
 
 const databasePassword = credentials.db.password;
 ```
@@ -77,21 +77,48 @@ npx node-credentials edit
 npx node-credentials encrypt
 ```
 
+## CLI
+
+```
+npx node-credentials help
+```
+
 ## API
 
 ### config
 
-| Argument | Type   | Description                              |
-| -------- | ------ | ---------------------------------------- |
-| keyValue | String | MASTER_KEY value for decrypt credentials |
-| path     | String | file path for credentials.json           |
+| Argument | Type   | Description                                   |
+| -------- | ------ | --------------------------------------------- |
+| keyValue | String | NODE_MASTER_KEY value for decrypt credentials |
+| path     | String | file path for credentials.json                |
 
 ### credentials
 
 Return the value of credentials
 
-### CLI
+### credentialsEnv
 
+Return the value of credentiasl based on process.env.NODE_ENV
+Example:
+
+```js
+//credentials.json
+
+{
+  "development" : {
+    "key": "password"
+  },
+  "test" : {
+    "key": "password_test"
+  }
+}
 ```
-npx node-credentials help
+
+```js
+const vault = require("node-credentials");
+vault.config();
+console.log(vault.credentials);
+// {development: {key: ""password}, test: {key: "password_test"}}
+console.log(vault.credentialsEnv);
+// {key: "password"}
 ```
