@@ -72,3 +72,37 @@ describe("node-vault config credentialsFilePath", () => {
     });
   });
 });
+
+describe("node-vault credentialsEnv", () => {
+  const credentialsFile = require("./examples/encryptDecryptEnv/credentials.json");
+
+  const vaultFactory = nodeEnv => {
+    const vault = new Vault({ nodeEnv });
+    vault.config({
+      keyValue: NODE_MASTER_KEY,
+      path: __dirname + "/examples/encryptDecryptEnv"
+    });
+    return vault;
+  };
+
+  test("NODE_ENV=development", () => {
+    const vault = vaultFactory("development");
+    expect(vault.credentialsEnv).toEqual({
+      my_key: credentialsFile.development.my_key
+    });
+  });
+
+  test("NODE_ENV=test", () => {
+    const vault = vaultFactory("test");
+    expect(vault.credentialsEnv).toEqual({
+      my_key: credentialsFile.test.my_key
+    });
+  });
+
+  test("NODE_ENV=production", () => {
+    const vault = vaultFactory("production");
+    expect(vault.credentialsEnv).toEqual({
+      my_key: process.env.ENV_CREDENTIAL
+    });
+  });
+});
