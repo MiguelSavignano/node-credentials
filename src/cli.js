@@ -14,8 +14,12 @@ const init = ({ path }) => {
     );
   } else {
     vault.createNewKey();
-    vault.encryptFile();
-    fs.unlinkSync(`${vault.credentialsFilePath}`);
+    vault
+      .encryptFile()
+      .then(() => {
+        fs.unlinkSync(`${vault.credentialsFilePath}`);
+      })
+      .catch(error => {});
   }
 };
 
@@ -24,8 +28,12 @@ const encrypt = ({ path }) => {
     credentialsFilePath: `${path}/credentials.json`
   });
   if (fs.existsSync(`${vault.credentialsFilePath}.key`)) {
-    vault.encryptFile();
-    fs.unlinkSync(`${vault.credentialsFilePath}`);
+    vault
+      .encryptFile()
+      .then(() => {
+        fs.unlinkSync(`${vault.credentialsFilePath}`);
+      })
+      .catch(error => {});
   } else {
     console.log(
       "Warning credentials.json.key not exists, create new key with init"
