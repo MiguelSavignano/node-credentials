@@ -1,3 +1,7 @@
+### v0.2.1
+
+- manage customs environment with NODE_CREDENTIALS_ENV
+
 ### v0.2.0
 
 - credentialsEnv read credentials based on the Node environment varaible.
