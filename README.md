@@ -33,7 +33,7 @@ Your credentials.json it's encrypted, and generate credentials.json.key
 Save the key value, and ignore this file in your version control.
 
 ```
-echo credentias.json.key > .gitignore
+echo credentials.json.key >> .gitignore
 ```
 
 ### Use credentials
@@ -98,7 +98,7 @@ Return the value of credentials
 
 ### credentialsEnv
 
-Return the value of credentiasl based on process.env.NODE_ENV
+Return the value of credentials based on process.env.NODE_ENV
 Example:
 
 ```js
