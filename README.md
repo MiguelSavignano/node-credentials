@@ -50,7 +50,7 @@ vault.config();
 ```js
 const { credentials } = require("node-credentials");
 
-const databasePassword = credentials.db.password;
+const apiKey = credentials.apiKey;
 ```
 
 ### Use in production
@@ -98,7 +98,7 @@ Return the value of credentials
 
 ### credentialsEnv
 
-Return the value of credentials based on process.env.NODE_ENV
+Return the value of credentials based on process.env.NODE_CREDENTIALS_ENV or process.env.NODE_ENV
 Example:
 
 ```js
@@ -106,19 +106,66 @@ Example:
 
 {
   "development" : {
-    "key": "password"
+    "key": "password_development"
   },
   "test" : {
     "key": "password_test"
+  },
+  "staging: {
+    "key": "password_staging"
   }
 }
+```
+
+- By default use development key
+
+```js
+const vault = require("node-credentials");
+vault.config();
+
+console.log(vault.credentials);
+// {development: {key: ""password_development}, test: {key: "password_test"}}
+console.log(vault.credentialsEnv);
+// {key: "password_development"}
+```
+
+- Set custom environment
+
+```
+NODE_CREDENTIALS_ENV=staging node main.js
+```
+
+```js
+const vault = require("node-credentials");
+console.log(vault.credentialsEnv);
+// {key: "password_staging"}
+```
+
+### Environment variable in credentials file
+
+Some credentials it's not recomend set in credentials file, like production database password.
+
+credentials file accept template variables
+
+```json
+// credentials.json
+{
+  "production": {
+    "database": {
+      "password": "<%= process.env.DATABASE_PASSWORD %>"
+    }
+  }
+}
+```
+
+```
+NODE_ENV=production DATABASE_PASSWORD=mysecret main.js
 ```
 
 ```js
 const vault = require("node-credentials");
 vault.config();
-console.log(vault.credentials);
-// {development: {key: ""password}, test: {key: "password_test"}}
+
 console.log(vault.credentialsEnv);
-// {key: "password"}
+// { database: { password: "mysecret" } }
 ```
