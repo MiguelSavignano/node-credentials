@@ -1,7 +1,11 @@
+interface IConfigOptions {
+  keyValue?: string;
+  path?: string;
+}
 export interface IVault {
   credentials: any;
   credentialsEnv: any;
-  config({ keyValue, path }: { keyValue?: string; path?: string }): any;
+  config(options?: IConfigOptions): any;
 }
 declare const Vault: any;
 declare const vault: IVault;
