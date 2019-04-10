@@ -1,8 +1,14 @@
-export interface Vault {
+export interface IVault {
   credentials: any;
-  // credentials by environment
   credentialsEnv: any;
-  config({ keyValue, path }: { keyValue?: string; path?: string });
+  config({ keyValue, path }: { keyValue?: string; path?: string }): any;
 }
+declare const Vault: any;
+declare const vault: IVault;
+declare const credentials: any;
+declare const credentialsEnv: any;
 
-export default Vault;
+export { Vault };
+export { credentials };
+export { credentialsEnv };
+export default vault;
