@@ -25,3 +25,13 @@ jobs:
       - name: Test
         run: |
           npm test
+  publish:
+    needs: [build]
+    steps:
+      - name: Publish to Npm
+        # if: contains(github.ref, 'refs/tags/v')
+        run: |
+          echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' >> .npmrc
+          npm publish
+        env:
+          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
