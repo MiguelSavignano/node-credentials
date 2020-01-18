@@ -1,7 +1,5 @@
 # Node encrypted secrets
 
-[![CircleCI](https://circleci.com/gh/MiguelSavignano/node-credentials.svg?style=svg)](https://circleci.com/gh/MiguelSavignano/node-credentials)
-
 Manage your secrets with single entrypted file.
 Inspired in [Rails encrypted secrets management](https://rubyinrails.com/2018/02/24/rails-5-1-encrypted-secrets-management-feature/)
 
@@ -41,14 +39,14 @@ echo credentials.json.key >> .gitignore
 - Load credentials in your main.js
 
 ```js
-const vault = require("node-credentials");
+const vault = require('node-credentials');
 vault.config();
 ```
 
 - Read credentials
 
 ```js
-const { credentials } = require("node-credentials");
+const { credentials } = require('node-credentials');
 
 const apiKey = credentials.apiKey;
 ```
@@ -120,7 +118,7 @@ Example:
 - By default use development key
 
 ```js
-const vault = require("node-credentials");
+const vault = require('node-credentials');
 vault.config();
 
 console.log(vault.credentials);
@@ -136,7 +134,7 @@ NODE_CREDENTIALS_ENV=staging node main.js
 ```
 
 ```js
-const vault = require("node-credentials");
+const vault = require('node-credentials');
 console.log(vault.credentialsEnv);
 // {key: "password_staging"}
 ```
@@ -163,7 +161,7 @@ NODE_ENV=production DATABASE_PASSWORD=mysecret main.js
 ```
 
 ```js
-const vault = require("node-credentials");
+const vault = require('node-credentials');
 vault.config();
 
 console.log(vault.credentialsEnv);
