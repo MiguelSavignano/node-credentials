@@ -1,4 +1,5 @@
 var crypto = require('crypto');
+const { type } = require('os');
 
 const encrypt = (key, text) =>
   new Promise((resolve, reject) => {
@@ -35,11 +36,29 @@ const encryptJSON = async (encKey, object) => {
   }, Promise.resolve({}));
 };
 
+function isObject(variable) {
+  return (
+    variable !== undefined &&
+    variable !== null &&
+    variable.constructor === Object
+  );
+}
+
 const transformValues = async (object, fnc) => {
   return await Object.entries(object).reduce(async (memo, [key, value]) => {
     const result = await memo;
     try {
-      result[key] = await fnc(value);
+      if (typeof value === 'string') {
+        result[key] = await fnc(value);
+      } else if (typeof value == 'number') {
+        result[key] = await fnc(`${value}`);
+      } else if (Array.isArray(value)) {
+        result[key] = await Promise.all(value.map((subValue) => fnc(subValue)));
+      } else if (isObject(object)) {
+        result[key] = await transformValues(value, fnc);
+      } else {
+        result[key] = value;
+      }
       return result;
     } catch (e) {
       console.error(e);
