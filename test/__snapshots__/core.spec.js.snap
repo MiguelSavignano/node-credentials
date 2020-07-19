@@ -1,0 +1,103 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`core transformValues async 1`] = `
+Object {
+  "apikey": "1234 MOCK",
+  "complex": Array [
+    Array [
+      "1 MOCK",
+      Object {
+        "data": Array [
+          Object {
+            "a": "4 MOCK",
+            "b": Array [
+              Array [
+                "8 MOCK",
+              ],
+            ],
+          },
+        ],
+      },
+    ],
+  ],
+  "config": Array [
+    Object {
+      "data": "data MOCK",
+    },
+    Object {
+      "data": "data2 MOCK",
+    },
+    "12345 MOCK",
+    "78 MOCK",
+  ],
+  "data2": null,
+  "database": Object {
+    "password": "12345 MOCK",
+    "user": "1234 MOCK",
+  },
+  "error": null,
+  "errors": Array [
+    Array [
+      "1 MOCK",
+      "2 MOCK",
+      "3 MOCK",
+    ],
+  ],
+  "keys": Array [
+    "1234 MOCK",
+    "123 MOCK",
+  ],
+  "password": "12344 MOCK",
+}
+`;
+
+exports[`core transformValues sync 1`] = `
+Object {
+  "apikey": "1234 MOCK",
+  "complex": Array [
+    Array [
+      "1 MOCK",
+      Object {
+        "data": Array [
+          Object {
+            "a": "4 MOCK",
+            "b": Array [
+              Array [
+                "8 MOCK",
+              ],
+            ],
+          },
+        ],
+      },
+    ],
+  ],
+  "config": Array [
+    Object {
+      "data": "data MOCK",
+    },
+    Object {
+      "data": "data2 MOCK",
+    },
+    "12345 MOCK",
+    "78 MOCK",
+  ],
+  "data2": null,
+  "database": Object {
+    "password": "12345 MOCK",
+    "user": "1234 MOCK",
+  },
+  "error": null,
+  "errors": Array [
+    Array [
+      "1 MOCK",
+      "2 MOCK",
+      "3 MOCK",
+    ],
+  ],
+  "keys": Array [
+    "1234 MOCK",
+    "123 MOCK",
+  ],
+  "password": "12344 MOCK",
+}
+`;

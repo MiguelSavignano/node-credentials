@@ -4,7 +4,7 @@ var fs = require('fs');
 
 class Vault {
   constructor({
-    decryptFnc = core.decrypt,
+    decryptFnc = core.decryptJSON,
     encryptFnc = core.encryptJSON,
     credentialsFilePath = 'credentials.json',
     nodeEnv = 'development',
@@ -58,10 +58,7 @@ class Vault {
   }
 
   getMasterKey() {
-    return (
-      process.env.NODE_MASTER_KEY ||
-      fs.readFileSync(`${this.credentialsFilePath}.key`, 'utf8').trim()
-    );
+    return process.env.NODE_MASTER_KEY || fs.readFileSync(`${this.credentialsFilePath}.key`, 'utf8').trim();
   }
 }
 module.exports.Vault = Vault;
