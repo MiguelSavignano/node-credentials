@@ -45,30 +45,30 @@ function isObject(variable) {
 }
 
 const transformValues = async (object, fnc) => {
-  return await Object.entries(object).reduce(async (memo, [key, value]) => {
-    const result = await memo;
-    try {
-      if (isObject(value)) {
-        result[key] = await transformValues(value, fnc);
-      } else if (Array.isArray(value)) {
-        result[key] = await Promise.all(
-          value.map((subValue) => {
-            if (typeof subValue === 'string' || typeof subValue === 'number') {
-              return fnc(subValue);
-            } else {
-              return transformValues(subValue, fnc);
-            }
-          }),
-        );
-      } else if (typeof value === 'string' || typeof value == 'number') {
-        result[key] = await fnc(value);
-      } else {
-        result[key] = value;
-      }
-      return result;
-    } catch (e) {
-      console.error(e);
+  const resolveSubTypes = async (value) => {
+    if (isObject(value)) {
+      return transformValues(value, fnc);
+    } else if (Array.isArray(value)) {
+      return Promise.all(
+        value.map((subValue) => {
+          if (typeof subValue === 'string' || typeof subValue === 'number') {
+            return fnc(subValue);
+          } else {
+            return transformValues(subValue, fnc);
+          }
+        }),
+      );
+    } else if (typeof value === 'string' || typeof value == 'number') {
+      return fnc(value);
+    } else {
+      return value;
     }
+  };
+
+  return Object.entries(object).reduce(async (memo, [key, value]) => {
+    const result = await memo;
+    result[key] = await resolveSubTypes(value);
+    return result;
   }, Promise.resolve({}));
 };
 
