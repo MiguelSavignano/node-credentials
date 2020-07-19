@@ -1,6 +1,6 @@
-var fs = require("fs");
+var fs = require('fs');
 
-const validEncrypted = value => {
+const validEncrypted = (value) => {
   return value.length > 16;
 };
 expect.extend({
@@ -8,12 +8,9 @@ expect.extend({
     const pass = validEncrypted(value);
     return {
       pass,
-      message: () =>
-        pass
-          ? `valid encrypted length: ${value.length}`
-          : `invalid encrypted length: ${value.length}`
+      message: () => (pass ? `valid encrypted length: ${value.length}` : `invalid encrypted length: ${value.length}`),
     };
-  }
+  },
 });
 
 expect.extend({
@@ -22,20 +19,18 @@ expect.extend({
     return {
       pass,
       message: () =>
-        pass
-          ? `valid encrypted file length: ${value.length}`
-          : `invalid encrypted file length: ${value.length}`
+        pass ? `valid encrypted file length: ${value.length}` : `invalid encrypted file length: ${value.length}`,
     };
-  }
+  },
 });
 
 expect.extend({
   async fileContains(filePath, fileText) {
-    const pass = fileText === fs.readFileSync(filePath, "utf8");
+    const pass = fileText === fs.readFileSync(filePath, 'utf8');
 
     return {
       pass: pass,
-      message: () => (pass ? `valid file` : `invalid contains ${fileText}`)
+      message: () => (pass ? `valid file` : `invalid contains ${fileText}`),
     };
-  }
+  },
 });

@@ -1,4 +1,4 @@
-const ejs = require("ejs");
+const ejs = require('ejs');
 
 const render = (templateString, variables) => {
   const result = ejs.render(templateString, { process, ENV: process.env });
