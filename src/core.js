@@ -43,21 +43,13 @@ function isObject(variable) {
     variable.constructor === Object
   );
 }
-
+// Only transform string or numbers, transform only deep values for Objects and Arrays
 const transformValues = async (object, fnc) => {
   const resolveSubTypes = async (value) => {
     if (isObject(value)) {
       return transformValues(value, fnc);
     } else if (Array.isArray(value)) {
-      return Promise.all(
-        value.map((subValue) => {
-          if (typeof subValue === 'string' || typeof subValue === 'number') {
-            return fnc(subValue);
-          } else {
-            return transformValues(subValue, fnc);
-          }
-        }),
-      );
+      return Promise.all(value.map((subValue) => resolveSubTypes(subValue)));
     } else if (typeof value === 'string' || typeof value == 'number') {
       return fnc(value);
     } else {

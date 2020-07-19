@@ -16,18 +16,20 @@ const obj = {
     '12345',
     78,
   ],
-  errors: [[1]],
+  errors: [[1, 2, 3]],
+  complex: [[1, { data: [{ a: 4, b: [[8]] }] }]],
   error: null,
   data2: undefined,
   database: {
     user: '1234',
     password: '12345',
   },
+  ff: () => {},
 };
 
 (async () => {
   const r = await core.transformValues(obj, (value) => {
     return core.encrypt(KEY, `${value}`);
   });
-  console.log(r);
+  console.log(JSON.stringify(r, null, 2));
 })();
