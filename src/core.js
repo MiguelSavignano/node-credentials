@@ -1,22 +1,19 @@
-var crypto = require("crypto");
+var crypto = require('crypto');
 
 const encrypt = (key, text) =>
   new Promise((resolve, reject) => {
-    const algorithm = "aes-256-cbc";
+    const algorithm = 'aes-256-cbc';
     crypto.randomBytes(16, (err, iv) => {
       if (err) {
-        console.error("ERROR encrypted", err);
+        console.error('ERROR encrypted', err);
         reject(err);
       }
       var cipher = crypto.createCipheriv(algorithm, key, iv);
-      var ciphertext = "";
-      ciphertext += cipher.update(text, "utf-8", "binary");
-      ciphertext += cipher.final("binary");
-      ciphertext = new Buffer.from(ciphertext, "binary");
-      var cipherBundle = [
-        ciphertext.toString("base64"),
-        iv.toString("base64")
-      ].join("--");
+      var ciphertext = '';
+      ciphertext += cipher.update(text, 'utf-8', 'binary');
+      ciphertext += cipher.final('binary');
+      ciphertext = new Buffer.from(ciphertext, 'binary');
+      var cipherBundle = [ciphertext.toString('base64'), iv.toString('base64')].join('--');
 
       resolve(cipherBundle);
     });
@@ -24,13 +21,13 @@ const encrypt = (key, text) =>
 exports.encrypt = encrypt;
 
 const decrypt = (key, text) => {
-  const algorithm = "aes-256-cbc";
-  var parts = text.split("--", 2);
-  var ciphertext = new Buffer.from(parts[0], "base64");
-  var iv = new Buffer.from(parts[1], "base64");
+  const algorithm = 'aes-256-cbc';
+  var parts = text.split('--', 2);
+  var ciphertext = new Buffer.from(parts[0], 'base64');
+  var iv = new Buffer.from(parts[1], 'base64');
 
   var decipher = crypto.createDecipheriv(algorithm, key, iv);
-  var plaintext = "";
+  var plaintext = '';
   plaintext += decipher.update(ciphertext);
   plaintext += decipher.final();
   return plaintext;
@@ -38,6 +35,6 @@ const decrypt = (key, text) => {
 exports.decrypt = decrypt;
 
 const newKey = () => {
-  return crypto.randomBytes(16).toString("hex");
+  return crypto.randomBytes(16).toString('hex');
 };
 exports.newKey = newKey;
