@@ -48,8 +48,8 @@ const transformValues = async (object, fnc) => {
   return await Object.entries(object).reduce(async (memo, [key, value]) => {
     const result = await memo;
     try {
-      if (typeof value === 'string' || typeof value == 'number') {
-        result[key] = await fnc(value);
+      if (isObject(value)) {
+        result[key] = await transformValues(value, fnc);
       } else if (Array.isArray(value)) {
         result[key] = await Promise.all(
           value.map((subValue) => {
@@ -60,8 +60,8 @@ const transformValues = async (object, fnc) => {
             }
           }),
         );
-      } else if (isObject(value)) {
-        result[key] = await transformValues(value, fnc);
+      } else if (typeof value === 'string' || typeof value == 'number') {
+        result[key] = await fnc(value);
       } else {
         result[key] = value;
       }
