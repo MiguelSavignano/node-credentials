@@ -35,7 +35,19 @@ const encryptJSON = async (encKey, object) => {
   }, Promise.resolve({}));
 };
 
-exports.encryptJSON = encryptJSON;
+const transformValues = async (object, fnc) => {
+  return await Object.entries(object).reduce(async (memo, [key, value]) => {
+    const result = await memo;
+    try {
+      result[key] = await fnc(value);
+      return result;
+    } catch (e) {
+      console.error(e);
+    }
+  }, Promise.resolve({}));
+};
+
+exports.transformValues = transformValues;
 
 const decrypt = (key, text) => {
   const algorithm = 'aes-256-cbc';
