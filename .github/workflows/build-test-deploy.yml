@@ -28,7 +28,7 @@ jobs:
       - uses: ashley-taylor/junit-report-annotations-action@1.3
         if: always()
         with:
-          path: ./junit.xml
+          path: '**/junit.xml'
           access-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to Npm
