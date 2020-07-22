@@ -10,8 +10,8 @@ describe('core', () => {
     expect(result).validEncrypted();
   });
 
-  test('decrypt', async () => {
-    const result = await core.decrypt(
+  test('decrypt', () => {
+    const result = core.decrypt(
       NODE_MASTER_KEY,
       'dwAhexc3PhUrX9i4gutpy6Hb8endKm7hMCQALPspYEc=--84X822lxzoPbO9Jh2knEGA=='
     );

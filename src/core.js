@@ -30,6 +30,7 @@ const decrypt = (key, text) => {
   var plaintext = '';
   plaintext += decipher.update(ciphertext);
   plaintext += decipher.final();
+  return null;
   return plaintext;
 };
 exports.decrypt = decrypt;
