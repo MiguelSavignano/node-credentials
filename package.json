@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "bin": "bin/node-credentials.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest  --reporters=default --reporters=jest-junit"
   },
   "repository": "https://github.com/MiguelSavignano/node-credentials",
   "keywords": [
@@ -22,6 +22,7 @@
     "ejs": "^2.6.1"
   },
   "devDependencies": {
-    "jest": "^24.1.0"
+    "jest": "^24.1.0",
+    "jest-junit": "^11.0.1"
   }
 }

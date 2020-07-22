@@ -22,12 +22,14 @@ jobs:
       - name: Build
         run: npm ci
 
-      - uses: mattallty/jest-github-action@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Test
+        run: npm test
+
+      - uses: ashley-taylor/junit-report-annotations-action@1.3
+        if: always()
         with:
-          changes-only: true
-          test-command: "npm test"
+          path: ./junit.xml
+          access-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to Npm
         if: contains(github.ref, 'refs/tags/v')
