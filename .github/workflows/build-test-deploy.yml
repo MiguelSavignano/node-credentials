@@ -25,10 +25,9 @@ jobs:
       - name: Test
         run: npm test
 
-      - uses: ashley-taylor/junit-report-annotations-action@1.3
-        if: always()
+      - uses: IgnusG/jest-report-action@v2.3.3
+        if: always() # Or use "continue-on-error: true" in previous test step
         with:
-          path: '**/junit.xml'
           access-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to Npm
