@@ -69,6 +69,7 @@ const encrypt = async (key, text, ivBase64 = null) => {
 exports.encrypt = encrypt;
 
 const encryptJSON = async (encKey, text, ivBase64 = null) => {
+  ivBase64 = ivBase64 || (await generateIV()).toString('base64');
   const obj = JSON.parse(text);
   const objWithValuesEncrypted = await transformValues(obj, async (value) => {
     return encrypt(encKey, `${value}`, ivBase64);
