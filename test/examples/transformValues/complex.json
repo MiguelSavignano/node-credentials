@@ -1,0 +1,23 @@
+{
+  "apikey": "1234",
+  "password": 12344,
+  "keys": ["1234", "123"],
+  "config": [
+    {
+      "data": "data"
+    },
+    {
+      "data": "data2"
+    },
+    "12345",
+    78
+  ],
+  "errors": [[1, 2, 3]],
+  "complex": [[1, { "data": [{ "a": 4, "b": [[8]] }] }]],
+  "error": null,
+  "data2": null,
+  "database": {
+    "user": "1234",
+    "password": "12345"
+  }
+}

@@ -13,7 +13,7 @@ npm install node-credentials --save
 
 Create a credentials.json file
 
-```
+```json
 {
   "my_api_key": "api_key",
   "my_api_secret": "api_secret"
@@ -35,13 +35,6 @@ echo credentials.json.key >> .gitignore
 ```
 
 ### Use credentials
-
-- Load credentials in your main.js
-
-```js
-const vault = require('node-credentials');
-vault.config();
-```
 
 - Read credentials
 
@@ -99,17 +92,16 @@ Return the value of credentials
 Return the value of credentials based on process.env.NODE_CREDENTIALS_ENV or process.env.NODE_ENV
 Example:
 
-```js
-//credentials.json
-
+```json
+// credentials.json
 {
-  "development" : {
+  "development": {
     "key": "password_development"
   },
-  "test" : {
+  "test": {
     "key": "password_test"
   },
-  "staging: {
+  "staging": {
     "key": "password_staging"
   }
 }
@@ -119,24 +111,34 @@ Example:
 
 ```js
 const vault = require('node-credentials');
-vault.config();
 
-console.log(vault.credentials);
-// {development: {key: ""password_development}, test: {key: "password_test"}}
-console.log(vault.credentialsEnv);
+vault.credentials;
+// {development: {key: "password_development"}, test: {key: "password_test"}}
+vault.credentialsEnv;
 // {key: "password_development"}
 ```
 
 - Set custom environment
 
-```
-NODE_CREDENTIALS_ENV=staging node main.js
+```json
+// credentials.json
+{
+  "en": {
+    "development": {
+      "key": "en development password"
+    }
+  }
+}
 ```
 
-```js
+```
+NODE_CREDENTIALS_ENV=en.development node main.js
+```
+
+```javascript
 const vault = require('node-credentials');
-console.log(vault.credentialsEnv);
-// {key: "password_staging"}
+vault.credentialsEnv;
+// {key: "en development password"}
 ```
 
 ### Environment variable in credentials file
@@ -160,10 +162,9 @@ credentials file accept template variables
 NODE_ENV=production DATABASE_PASSWORD=mysecret main.js
 ```
 
-```js
+```javascript
 const vault = require('node-credentials');
-vault.config();
 
-console.log(vault.credentialsEnv);
+vault.credentialsEnv;
 // { database: { password: "mysecret" } }
 ```
