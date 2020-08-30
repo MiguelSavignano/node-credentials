@@ -4,8 +4,8 @@ var fs = require('fs');
 
 class Vault {
   constructor({
-    decryptFnc = core.decrypt,
-    encryptFnc = core.encrypt,
+    decryptFnc = core.decryptJSON,
+    encryptFnc = core.encryptJSON,
     credentialsFilePath = 'credentials.json',
     nodeEnv = 'development',
   } = {}) {
@@ -28,7 +28,7 @@ class Vault {
     }
     const key = keyValue || this.getMasterKey();
     const text = fs.readFileSync(`${this.credentialsFilePath}.enc`, 'utf8');
-    const credentialsText = this.decryptFnc(key, text);
+    const [credentialsText, iv] = this.decryptFnc(key, text);
     const credentialsTextRendered = render(credentialsText);
     const credentials = JSON.parse(credentialsTextRendered);
     this.setCredentials(credentials);
@@ -38,7 +38,13 @@ class Vault {
   async encryptFile({ keyValue } = {}) {
     const key = keyValue || this.getMasterKey();
     const text = fs.readFileSync(this.credentialsFilePath, 'utf8').trim();
-    const cipherBundle = await this.encryptFnc(key, text);
+    let iv;
+    try {
+      iv = fs.readFileSync(`${this.credentialsFilePath}.iv`, 'utf8').trim();
+    } catch {
+      iv = null;
+    }
+    const cipherBundle = await this.encryptFnc(key, text, iv);
     fs.writeFileSync(`${this.credentialsFilePath}.enc`, cipherBundle);
     return `${this.credentialsFilePath}.enc`;
   }
@@ -46,8 +52,9 @@ class Vault {
   editCredentials({ keyValue } = {}) {
     const key = keyValue || this.getMasterKey();
     const text = fs.readFileSync(`${this.credentialsFilePath}.enc`, 'utf8');
-    const decryptCredentials = this.decryptFnc(key, text);
+    const [decryptCredentials, iv] = this.decryptFnc(key, text);
     fs.writeFileSync(`${this.credentialsFilePath}`, decryptCredentials, 'utf8');
+    fs.writeFileSync(`${this.credentialsFilePath}.iv`, iv, 'utf8');
     return this.credentialsFilePath;
   }
 
