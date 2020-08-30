@@ -44,6 +44,20 @@ describe('node-vault', () => {
   });
 });
 
+describe('node-vault credentials with auto config', () => {
+  let credentialsFilePath = __dirname + '/examples/decrypt/credentials.json';
+
+  test('credentials', () => {
+    const vault = new Vault({ credentialsFilePath });
+    process.env.NODE_MASTER_KEY = NODE_MASTER_KEY;
+    expect(vault.credentials).toEqual({
+      my_key: 'password',
+      my_key_env: 'MY_ENV_CREDENTIAL',
+    });
+    process.env.NODE_MASTER_KEY = undefined;
+  });
+});
+
 describe('node-vault config', () => {
   let credentialsFilePath = __dirname + '/examples/decrypt/credentials.json';
 
