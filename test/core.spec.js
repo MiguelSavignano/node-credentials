@@ -12,7 +12,7 @@ describe('core', () => {
     expect(result).validEncrypted();
   });
 
-  test.only('encrypt with any key length', async () => {
+  test('encrypt with any key length', async () => {
     const result = await core.encrypt(SHORT_NODE_MASTER_KEY, credentialsString);
     expect(result).validEncrypted();
   });
@@ -25,7 +25,7 @@ describe('core', () => {
     expect(JSON.parse(result)).toEqual(credentials);
   });
 
-  test.only('decrypt  with any key length', async () => {
+  test('decrypt  with any key length', async () => {
     const [result, iv] = await core.decrypt(
       SHORT_NODE_MASTER_KEY,
       'YhSWFEmk0OOG1qQDmjkEjg==--hfHcXE55MQ0bDOHho2SLag=='
