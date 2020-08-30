@@ -8,7 +8,7 @@ class Vault {
     decryptFnc = core.decryptJSON,
     encryptFnc = core.encryptJSON,
     credentialsFilePath = 'credentials.json',
-    nodeEnv = 'development',
+    nodeEnv = process.env.NODE_CREDENTIALS_ENV || process.env.NODE_ENV || 'development',
     masterKey,
   } = {}) {
     this.decryptFnc = decryptFnc;
