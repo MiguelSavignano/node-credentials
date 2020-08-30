@@ -12,14 +12,29 @@ class Vault {
     this.decryptFnc = decryptFnc;
     this.encryptFnc = encryptFnc;
     this.credentialsFilePath = credentialsFilePath;
-    this.credentials = {};
-    this.credentialsEnv = {};
+    this._credentials = {};
+    this._credentialsEnv = {};
     this.nodeEnv = nodeEnv === '' ? 'development' : nodeEnv;
+    this.configured = false;
+  }
+
+  get credentials() {
+    if (!this.configured) {
+      this.config();
+    }
+    return this._credentials;
+  }
+
+  get credentialsEnv() {
+    if (!this.configured) {
+      this.config();
+    }
+    return this._credentialsEnv;
   }
 
   setCredentials(credentials) {
-    this.credentials = { ...credentials };
-    this.credentialsEnv = { ...credentials[this.nodeEnv] };
+    this._credentials = { ...credentials };
+    this._credentialsEnv = { ...credentials[this.nodeEnv] };
   }
 
   config({ keyValue, path } = {}) {
@@ -32,6 +47,7 @@ class Vault {
     const credentialsTextRendered = render(credentialsText);
     const credentials = JSON.parse(credentialsTextRendered);
     this.setCredentials(credentials);
+    this.configured = true;
     return credentials;
   }
 
