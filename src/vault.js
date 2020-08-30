@@ -54,7 +54,6 @@ class Vault {
     const text = fs.readFileSync(`${this.credentialsFilePath}.enc`, 'utf8');
     const [decryptCredentials, iv] = this.decryptFnc(key, text);
     fs.writeFileSync(`${this.credentialsFilePath}`, decryptCredentials, 'utf8');
-    console.log('iv', iv);
     fs.writeFileSync(`${this.credentialsFilePath}.iv`, iv, 'utf8');
     return this.credentialsFilePath;
   }
