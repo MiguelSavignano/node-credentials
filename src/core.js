@@ -1,5 +1,5 @@
-var crypto = require('crypto');
-const algorithm = 'aes-256-cbc';
+const crypto = require('crypto');
+const algorithm = 'aes-128-cbc';
 
 function isObject(variable) {
   return variable !== undefined && variable !== null && variable.constructor === Object;
@@ -54,9 +54,23 @@ const generateIV = () =>
     });
   });
 
+const isInvalidKey = (key) => key.length != 16;
+
+const generateValidKey = (baseKey) => {
+  const hash = crypto.createHash('sha1');
+  hash.update(baseKey);
+  return hash.digest().slice(0, 16);
+};
+
 const encrypt = async (key, text, ivBase64 = null) => {
+  if (isInvalidKey(key)) {
+    key = generateValidKey(key);
+  }
+  console.log(key);
   const iv = ivBase64 ? new Buffer.from(ivBase64, 'base64') : await generateIV();
-  var cipher = crypto.createCipheriv(algorithm, key, iv);
+  console.log('call');
+  const cipher = crypto.createCipheriv(algorithm, key, iv);
+  console.log('end');
   var ciphertext = '';
   ciphertext += cipher.update(text, 'utf-8', 'binary');
   ciphertext += cipher.final('binary');
@@ -79,6 +93,9 @@ const encryptJSON = async (encKey, text, ivBase64 = null) => {
 module.exports.encryptJSON = encryptJSON;
 
 const decrypt = (key, text) => {
+  if (isInvalidKey(key)) {
+    key = generateValidKey(key);
+  }
   var parts = text.split('--', 2);
   var ciphertext = new Buffer.from(parts[0], 'base64');
   var iv = new Buffer.from(parts[1], 'base64');
