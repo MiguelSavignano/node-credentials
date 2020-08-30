@@ -11,6 +11,11 @@ describe('core', () => {
     expect(result).validEncrypted();
   });
 
+  test('encrypt with any key length', async () => {
+    const result = await core.encrypt('12345678', credentialsString);
+    expect(result).validEncrypted();
+  });
+
   test('decrypt', async () => {
     const [result, iv] = await core.decrypt(
       NODE_MASTER_KEY,
