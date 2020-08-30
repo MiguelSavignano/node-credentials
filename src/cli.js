@@ -79,5 +79,6 @@ module.exports = {
   init,
   encrypt,
   edit,
+  decrypt: edit,
   help,
 };
