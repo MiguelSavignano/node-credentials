@@ -4,8 +4,8 @@ var fs = require('fs');
 
 class Vault {
   constructor({
-    decryptFnc = core.decrypt,
-    encryptFnc = core.encrypt,
+    decryptFnc = core.decryptJSON,
+    encryptFnc = core.encryptJSON,
     credentialsFilePath = 'credentials.json',
     nodeEnv = 'development',
   } = {}) {
