@@ -42,4 +42,9 @@ describe('core', () => {
     const result = await core.transformValues(complexJSON, async (value) => `${value} MOCK`);
     expect(result).toMatchSnapshot();
   });
+
+  test('newKey', () => {
+    const result = core.newKey();
+    expect(result).toHaveLength(32);
+  });
 });

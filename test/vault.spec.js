@@ -127,3 +127,15 @@ describe('node-vault credentialsEnv', () => {
     expect(vault.credentialsEnv).toEqual({ myKey: 'ES password' });
   });
 });
+
+describe('node-vault', () => {
+  let credentialsFilePath = __dirname + '/examples/encryptDecryptEnv/credentials.json';
+  afterEach(() => {
+    fs.unlinkSync(`${credentialsFilePath}.key`);
+  });
+
+  test('newKey', () => {
+    const vault = new Vault({ credentialsFilePath });
+    expect(vault.createNewKey()).toHaveLength(32);
+  });
+});
