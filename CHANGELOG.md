@@ -1,3 +1,7 @@
+### v0.3.0
+
+- Encrypt only json values not keys.
+
 ### v0.2.1
 
 - manage customs environment with NODE_CREDENTIALS_ENV
