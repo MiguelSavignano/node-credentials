@@ -2,17 +2,24 @@ interface IConfigOptions {
   keyValue?: string;
   path?: string;
 }
-export interface IVault {
-  credentials: any;
-  credentialsEnv: any;
+
+declare class Vault {
+  constructor(options: {
+    encryptFnc?: (encKey: string, text: string, ivBase64?: string) => string;
+    decryptFnc?: (encKey: string, text: string) => [string, string];
+    credentialsFilePath?: string;
+    nodeEnv?: string;
+    masterKey?: string;
+  });
+
+  credentials: object;
+  credentialsEnv: object;
   config(options?: IConfigOptions): any;
 }
-declare const Vault: any;
-declare const vault: IVault;
-declare const credentials: any;
-declare const credentialsEnv: any;
+declare const vault: Vault;
+declare const credentials: object;
+declare const credentialsEnv: object;
+declare const config: (options?: IConfigOptions) => any;
 
-export { Vault };
-export { credentials };
-export { credentialsEnv };
+export { credentials, credentialsEnv, config, Vault };
 export default vault;
