@@ -26,7 +26,9 @@ const encrypt = ({ path }) => {
       .encryptFile()
       .then(() => {
         fs.unlinkSync(`${vault.credentialsFilePath}`);
-        fs.unlinkSync(`${vault.credentialsFilePath}.iv`);
+        try {
+          fs.unlinkSync(`${vault.credentialsFilePath}.iv`);
+        } catch {}
       })
       .catch((error) => console.error(error));
   } else {
