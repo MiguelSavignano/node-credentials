@@ -42,7 +42,7 @@ class Vault {
 
   config({ keyValue, path } = {}) {
     if (path) {
-      this.credentialsFilePath = `${path}/credentials.json`;
+      this.credentialsFilePath = path;
     }
     const key = keyValue || this.getMasterKey();
     const text = fs.readFileSync(`${this.credentialsFilePath}.enc`, 'utf8');

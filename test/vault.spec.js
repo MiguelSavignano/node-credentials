@@ -78,7 +78,7 @@ describe('node-vault config credentialsFilePath', () => {
     const vault = new Vault();
     vault.config({
       keyValue: NODE_MASTER_KEY,
-      path: __dirname + '/examples/decrypt',
+      path: __dirname + '/examples/decrypt/credentials.json',
     });
     expect(vault.credentials).toEqual({
       myKey: 'password',
