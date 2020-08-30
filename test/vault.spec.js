@@ -119,4 +119,14 @@ describe('node-vault credentialsEnv', () => {
       my_key: process.env.ENV_CREDENTIAL,
     });
   });
+
+  test('NODE_ENV=es.production', () => {
+    const vault = new Vault({
+      nodeEnv: 'es.development',
+      masterKey: NODE_MASTER_KEY,
+      credentialsFilePath: __dirname + '/examples/encryptDecryptEnv/credentialsByCountry.json',
+    });
+
+    expect(vault.credentialsEnv).toEqual({ my_key: 'ES password' });
+  });
 });

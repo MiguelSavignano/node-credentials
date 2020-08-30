@@ -1,6 +1,7 @@
 const core = require('./core');
 const render = require('./template-render').render;
-var fs = require('fs');
+const fs = require('fs');
+const { get } = require('lodash');
 
 class Vault {
   constructor({
@@ -8,10 +9,12 @@ class Vault {
     encryptFnc = core.encryptJSON,
     credentialsFilePath = 'credentials.json',
     nodeEnv = 'development',
+    masterKey,
   } = {}) {
     this.decryptFnc = decryptFnc;
     this.encryptFnc = encryptFnc;
     this.credentialsFilePath = credentialsFilePath;
+    this.masterKey = masterKey;
     this._credentials = {};
     this._credentialsEnv = {};
     this.nodeEnv = nodeEnv === '' ? 'development' : nodeEnv;
@@ -34,7 +37,7 @@ class Vault {
 
   setCredentials(credentials) {
     this._credentials = { ...credentials };
-    this._credentialsEnv = { ...credentials[this.nodeEnv] };
+    this._credentialsEnv = get(credentials, this.nodeEnv, {});
   }
 
   config({ keyValue, path } = {}) {
@@ -81,7 +84,9 @@ class Vault {
   }
 
   getMasterKey() {
-    return process.env.NODE_MASTER_KEY || fs.readFileSync(`${this.credentialsFilePath}.key`, 'utf8').trim();
+    return (
+      this.masterKey || process.env.NODE_MASTER_KEY || fs.readFileSync(`${this.credentialsFilePath}.key`, 'utf8').trim()
+    );
   }
 }
 module.exports.Vault = Vault;
