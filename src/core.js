@@ -46,29 +46,32 @@ const transformValues = (object, fnc) => {
 };
 exports.transformValues = transformValues;
 
-const encrypt = (key, text) =>
+const generateIV = () =>
   new Promise((resolve, reject) => {
-    crypto.randomBytes(16, (err, iv) => {
-      if (err) {
-        console.error('ERROR encrypted', err);
-        reject(err);
-      }
-      var cipher = crypto.createCipheriv(algorithm, key, iv);
-      var ciphertext = '';
-      ciphertext += cipher.update(text, 'utf-8', 'binary');
-      ciphertext += cipher.final('binary');
-      ciphertext = new Buffer.from(ciphertext, 'binary');
-      var cipherBundle = [ciphertext.toString('base64'), iv.toString('base64')].join('--');
-
-      resolve(cipherBundle);
+    crypto.pseudoRandomBytes(16, (err, iv) => {
+      if (err) reject(err);
+      resolve(iv);
     });
   });
+
+const encrypt = async (key, text, ivBase64 = null) => {
+  const iv = ivBase64 ? new Buffer.from(ivBase64, 'base64') : await generateIV();
+  var cipher = crypto.createCipheriv(algorithm, key, iv);
+  var ciphertext = '';
+  ciphertext += cipher.update(text, 'utf-8', 'binary');
+  ciphertext += cipher.final('binary');
+  ciphertext = new Buffer.from(ciphertext, 'binary');
+  var cipherBundle = [ciphertext.toString('base64'), iv.toString('base64')].join('--');
+
+  return cipherBundle;
+};
+
 exports.encrypt = encrypt;
 
-const encryptJSON = async (encKey, text) => {
+const encryptJSON = async (encKey, text, ivBase64 = null) => {
   const obj = JSON.parse(text);
   const objWithValuesEncrypted = await transformValues(obj, async (value) => {
-    return encrypt(encKey, `${value}`);
+    return encrypt(encKey, `${value}`, ivBase64);
   });
   return JSON.stringify(objWithValuesEncrypted, 0, 2);
 };
@@ -83,16 +86,19 @@ const decrypt = (key, text) => {
   var plaintext = '';
   plaintext += decipher.update(ciphertext);
   plaintext += decipher.final();
-  return plaintext;
+  return [plaintext, parts[1]];
 };
 exports.decrypt = decrypt;
 
 const decryptJSON = (encKey, text) => {
   const obj = JSON.parse(text);
+  let lastIv;
   const objWithValuesDecrypted = transformValues(obj, (value) => {
-    return decrypt(encKey, value);
+    let [plaintext, iv] = decrypt(encKey, value);
+    lastIv = iv;
+    return plaintext;
   });
-  return JSON.stringify(objWithValuesDecrypted, 0, 2);
+  return [JSON.stringify(objWithValuesDecrypted, 0, 2), lastIv];
 };
 module.exports.decryptJSON = decryptJSON;
 
