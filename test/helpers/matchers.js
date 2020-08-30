@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 var fs = require('fs');
 
 const validEncrypted = (value) => {
