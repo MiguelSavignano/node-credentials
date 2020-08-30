@@ -1,3 +1,9 @@
+### v0.4.0
+
+- Encrypt json values with he same iv.
+- credentialsEnv with multiple environments #19.
+- Auto configure when call credentials #18.
+
 ### v0.3.0
 
 - Encrypt only json values not keys.
