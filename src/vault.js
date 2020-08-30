@@ -28,7 +28,7 @@ class Vault {
     }
     const key = keyValue || this.getMasterKey();
     const text = fs.readFileSync(`${this.credentialsFilePath}.enc`, 'utf8');
-    const credentialsText = this.decryptFnc(key, text);
+    const [credentialsText, iv] = this.decryptFnc(key, text);
     const credentialsTextRendered = render(credentialsText);
     const credentials = JSON.parse(credentialsTextRendered);
     this.setCredentials(credentials);
