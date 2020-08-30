@@ -38,8 +38,8 @@ describe('node-vault', () => {
     const fileText = fs.readFileSync(result, 'utf8');
 
     expect(JSON.parse(fileText)).toEqual({
-      my_key: 'password',
-      my_key_env: '<%= process.env.ENV_CREDENTIAL %>',
+      myKey: 'password',
+      myKeyEnv: '<%= process.env.ENV_CREDENTIAL %>',
     });
   });
 });
@@ -51,8 +51,8 @@ describe('node-vault credentials with auto config', () => {
     const vault = new Vault({ credentialsFilePath });
     process.env.NODE_MASTER_KEY = NODE_MASTER_KEY;
     expect(vault.credentials).toEqual({
-      my_key: 'password',
-      my_key_env: 'MY_ENV_CREDENTIAL',
+      myKey: 'password',
+      myKeyEnv: 'MY_ENV_CREDENTIAL',
     });
     process.env.NODE_MASTER_KEY = undefined;
   });
@@ -67,8 +67,8 @@ describe('node-vault config', () => {
       keyValue: NODE_MASTER_KEY,
     });
     expect(vault.credentials).toEqual({
-      my_key: 'password',
-      my_key_env: 'MY_ENV_CREDENTIAL',
+      myKey: 'password',
+      myKeyEnv: 'MY_ENV_CREDENTIAL',
     });
   });
 });
@@ -81,42 +81,39 @@ describe('node-vault config credentialsFilePath', () => {
       path: __dirname + '/examples/decrypt',
     });
     expect(vault.credentials).toEqual({
-      my_key: 'password',
-      my_key_env: 'MY_ENV_CREDENTIAL',
+      myKey: 'password',
+      myKeyEnv: 'MY_ENV_CREDENTIAL',
     });
   });
 });
 
 describe('node-vault credentialsEnv', () => {
-  const credentialsFile = require('./examples/encryptDecryptEnv/credentials.json');
-
-  const vaultFactory = (nodeEnv) => {
-    const vault = new Vault({ nodeEnv });
-    vault.config({
-      keyValue: NODE_MASTER_KEY,
-      path: __dirname + '/examples/encryptDecryptEnv',
+  const vaultFactory = ({ nodeEnv }) => {
+    return new Vault({
+      nodeEnv,
+      masterKey: NODE_MASTER_KEY,
+      credentialsFilePath: __dirname + '/examples/encryptDecryptEnv/credentials.json',
     });
-    return vault;
   };
 
   test('NODE_ENV=development', () => {
-    const vault = vaultFactory('development');
+    const vault = vaultFactory({ nodeEnv: 'development' });
     expect(vault.credentialsEnv).toEqual({
-      my_key: credentialsFile.development.my_key,
+      myKey: 'password',
     });
   });
 
   test('NODE_ENV=test', () => {
-    const vault = vaultFactory('test');
+    const vault = vaultFactory({ nodeEnv: 'test' });
     expect(vault.credentialsEnv).toEqual({
-      my_key: credentialsFile.test.my_key,
+      myKey: 'password test',
     });
   });
 
   test('NODE_ENV=production', () => {
-    const vault = vaultFactory('production');
+    const vault = vaultFactory({ nodeEnv: 'production' });
     expect(vault.credentialsEnv).toEqual({
-      my_key: process.env.ENV_CREDENTIAL,
+      myKey: process.env.ENV_CREDENTIAL,
     });
   });
 
@@ -127,6 +124,6 @@ describe('node-vault credentialsEnv', () => {
       credentialsFilePath: __dirname + '/examples/encryptDecryptEnv/credentialsByCountry.json',
     });
 
-    expect(vault.credentialsEnv).toEqual({ my_key: 'ES password' });
+    expect(vault.credentialsEnv).toEqual({ myKey: 'ES password' });
   });
 });
