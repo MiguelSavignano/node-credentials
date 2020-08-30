@@ -67,14 +67,13 @@ const encrypt = async (key, text, ivBase64 = null) => {
     key = generateValidKey(key);
   }
 
-  // console.log('KEY', key.toString('hex'), key.length);
   const iv = ivBase64 ? new Buffer.from(ivBase64, 'base64') : await generateIV();
   const cipher = crypto.createCipheriv(algorithm, key, iv);
-  var ciphertext = '';
+  let ciphertext = '';
   ciphertext += cipher.update(text, 'utf-8', 'binary');
   ciphertext += cipher.final('binary');
   ciphertext = new Buffer.from(ciphertext, 'binary');
-  var cipherBundle = [ciphertext.toString('base64'), iv.toString('base64')].join('--');
+  const cipherBundle = [ciphertext.toString('base64'), iv.toString('base64')].join('--');
 
   return cipherBundle;
 };
@@ -95,12 +94,12 @@ const decrypt = (key, text) => {
   if (isInvalidKey(key)) {
     key = generateValidKey(key);
   }
-  var parts = text.split('--', 2);
-  var ciphertext = new Buffer.from(parts[0], 'base64');
-  var iv = new Buffer.from(parts[1], 'base64');
+  const parts = text.split('--', 2);
+  const ciphertext = new Buffer.from(parts[0], 'base64');
+  const iv = new Buffer.from(parts[1], 'base64');
 
-  var decipher = crypto.createDecipheriv(algorithm, key, iv);
-  var plaintext = '';
+  const decipher = crypto.createDecipheriv(algorithm, key, iv);
+  let plaintext = '';
   plaintext += decipher.update(ciphertext);
   plaintext += decipher.final();
   return [plaintext, parts[1]];
