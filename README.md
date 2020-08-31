@@ -11,61 +11,36 @@ npm install node-credentials --save
 
 ## Usage
 
-Create a credentials.json file
+### Encrypt and decrypt json files
 
 ```json
+// credentials.json
 {
-  "my_api_key": "api_key",
-  "my_api_secret": "api_secret"
+  "username": "user",
+  "password": "myPassword"
 }
-```
-
-### Setup
-
-```
-npx node-credentials init
-```
-
-Your credentials.json it's encrypted, and generate credentials.json.key
-
-Save the key value, and ignore this file in your version control.
-
-```
-echo credentials.json.key >> .gitignore
-```
-
-### Use credentials
-
-- Read credentials
-
-```js
-const { credentials } = require('node-credentials');
-
-const apiKey = credentials.apiKey;
-```
-
-### Use in production
-
-You cat set a environment varible NODE_MASTER_KEY for decrypt secrets.
-
-```
-NODE_MASTER_KEY=my-credential-key server.js
-```
-
-### Edit credentials
-
-For chage your credentials.json.enc you can decrypt and encrypt using the CLI
-
-- Decrypt
-
-```
-npx node-credentials edit
 ```
 
 - Encrypt
 
 ```
-npx node-credentials encrypt
+NODE_MASTER_KEY=$MASTER_KEY npx node-credentials encrypt --path credentials.json
+```
+
+Only encrypted json values.
+
+```json
+{
+  "username": "sGPi7jVJFORTBSOOKx5nMw==--eYed5TIh3D+9rjN/usOB0w==",
+  "password": "+C4M+xFxOQXTyvPJ7QSJuQ==--eYed5TIh3D+9rjN/usOB0w=="
+}
+```
+
+- Decrypt
+
+```
+NODE_MASTER_KEY=$MASTER_KEY npx node-credentials decrypt --path credentials.json
+
 ```
 
 ## CLI
@@ -78,14 +53,72 @@ npx node-credentials help
 
 ### config
 
-| Argument | Type   | Description                                   |
-| -------- | ------ | --------------------------------------------- |
-| keyValue | String | NODE_MASTER_KEY value for decrypt credentials |
-| path     | String | file path for credentials.json                |
+| Argument | Type   | Description          | Default          |
+| -------- | ------ | -------------------- | ---------------- |
+| path     | String | file path to encrypt | credentials.json |
 
-### credentials
+## Setup for NodeJs projects
 
-Return the value of credentials
+Create a credentials.json file
+
+```json
+{
+  "myApiKey": "apiKey",
+  "myApiSecret": "apiSecret"
+}
+```
+
+```
+npx node-credentials init
+```
+
+OR use your own key
+
+```
+NODE_MASTER_KEY=$MASTER_KEY npx node-credentials init
+```
+
+Your credentials.json it's encrypted, and generate credentials.json.key
+
+Save the key value, and ignore this file in your version control.
+
+```
+echo credentials.json.key >> .gitignore
+```
+
+### Read credentials in runtime
+
+```js
+const { credentials } = require('node-credentials');
+
+const apiKey = credentials.apiKey;
+```
+
+### Use in production
+
+You can set a environment varible NODE_MASTER_KEY for decrypt secrets.
+
+```
+NODE_MASTER_KEY=my-credential-key server.js
+```
+
+### Edit credentials
+
+For chage your credentials.json.enc you can decrypt and encrypt using the CLI
+
+- Decrypt
+
+```
+npx node-credentials decrypt
+# or
+npx node-credentials edit
+```
+
+- Encrypt
+
+```
+npx node-credentials encrypt
+```
 
 ### credentialsEnv
 
@@ -98,11 +131,8 @@ Example:
   "development": {
     "key": "password_development"
   },
-  "test": {
-    "key": "password_test"
-  },
-  "staging": {
-    "key": "password_staging"
+  "production": {
+    "key": "password_production"
   }
 }
 ```
@@ -113,9 +143,9 @@ Example:
 const vault = require('node-credentials');
 
 vault.credentials;
-// {development: {key: "password_development"}, test: {key: "password_test"}}
+// { development: { key: "password_development" }, production: { key: "password_production" } }
 vault.credentialsEnv;
-// {key: "password_development"}
+// { key: "password_development" }
 ```
 
 - Set custom environment
@@ -123,29 +153,29 @@ vault.credentialsEnv;
 ```json
 // credentials.json
 {
-  "en": {
+  "us": {
     "development": {
-      "key": "en development password"
+      "key": "development password for US country"
     }
   }
 }
 ```
 
 ```
-NODE_CREDENTIALS_ENV=en.development node main.js
+NODE_CREDENTIALS_ENV=us.development node main.js
 ```
 
 ```javascript
 const vault = require('node-credentials');
 vault.credentialsEnv;
-// {key: "en development password"}
+// { key: "development password for US country" }
 ```
 
 ### Environment variable in credentials file
 
 Some credentials it's not recomend set in credentials file, like production database password.
 
-credentials file accept template variables
+credentials file accept template variables for process env object
 
 ```json
 // credentials.json
@@ -156,15 +186,4 @@ credentials file accept template variables
     }
   }
 }
-```
-
-```
-NODE_ENV=production DATABASE_PASSWORD=mysecret main.js
-```
-
-```javascript
-const vault = require('node-credentials');
-
-vault.credentialsEnv;
-// { database: { password: "mysecret" } }
 ```
