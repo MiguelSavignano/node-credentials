@@ -1,3 +1,8 @@
+### v0.5.0
+
+- Encrypt with any key length #20
+- Add more typescripts definitions
+
 ### v0.4.0
 
 - Encrypt json values with he same iv.

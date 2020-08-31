@@ -20,11 +20,16 @@ jobs:
           version: 10.16.3
 
       - name: Build
-        run: |
-          npm ci
+        run: npm ci
+
       - name: Test
-        run: |
-          npm test
+        run: npm test
+
+      - uses: IgnusG/jest-report-action@v2.3.3
+        if: always()
+        with:
+          access-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Publish to Npm
         if: contains(github.ref, 'refs/tags/v')
         run: |

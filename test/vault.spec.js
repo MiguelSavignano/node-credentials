@@ -54,7 +54,7 @@ describe('node-vault credentials with auto config', () => {
       myKey: 'password',
       myKeyEnv: 'MY_ENV_CREDENTIAL',
     });
-    process.env.NODE_MASTER_KEY = undefined;
+    delete process.env.NODE_MASTER_KEY;
   });
 });
 
@@ -78,7 +78,7 @@ describe('node-vault config credentialsFilePath', () => {
     const vault = new Vault();
     vault.config({
       keyValue: NODE_MASTER_KEY,
-      path: __dirname + '/examples/decrypt',
+      path: __dirname + '/examples/decrypt/credentials.json',
     });
     expect(vault.credentials).toEqual({
       myKey: 'password',
@@ -125,5 +125,17 @@ describe('node-vault credentialsEnv', () => {
     });
 
     expect(vault.credentialsEnv).toEqual({ myKey: 'ES password' });
+  });
+});
+
+describe('node-vault', () => {
+  let credentialsFilePath = __dirname + '/examples/encryptDecryptEnv/credentials.json';
+  afterEach(() => {
+    fs.unlinkSync(`${credentialsFilePath}.key`);
+  });
+
+  test('newKey', () => {
+    const vault = new Vault({ credentialsFilePath });
+    expect(vault.createNewKey()).toHaveLength(32);
   });
 });

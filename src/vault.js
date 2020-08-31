@@ -8,7 +8,7 @@ class Vault {
     decryptFnc = core.decryptJSON,
     encryptFnc = core.encryptJSON,
     credentialsFilePath = 'credentials.json',
-    nodeEnv = 'development',
+    nodeEnv = process.env.NODE_CREDENTIALS_ENV || process.env.NODE_ENV || 'development',
     masterKey,
   } = {}) {
     this.decryptFnc = decryptFnc;
@@ -42,7 +42,7 @@ class Vault {
 
   config({ keyValue, path } = {}) {
     if (path) {
-      this.credentialsFilePath = `${path}/credentials.json`;
+      this.credentialsFilePath = path;
     }
     const key = keyValue || this.getMasterKey();
     const text = fs.readFileSync(`${this.credentialsFilePath}.enc`, 'utf8');
@@ -84,9 +84,15 @@ class Vault {
   }
 
   getMasterKey() {
-    return (
-      this.masterKey || process.env.NODE_MASTER_KEY || fs.readFileSync(`${this.credentialsFilePath}.key`, 'utf8').trim()
-    );
+    try {
+      return (
+        this.masterKey ||
+        process.env.NODE_MASTER_KEY ||
+        fs.readFileSync(`${this.credentialsFilePath}.key`, 'utf8').trim()
+      );
+    } catch {
+      return undefined;
+    }
   }
 }
 module.exports.Vault = Vault;

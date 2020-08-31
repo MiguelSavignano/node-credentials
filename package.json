@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "bin": "bin/node-credentials.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest  --reporters=default --reporters=jest-junit --collect-coverage"
   },
   "repository": "https://github.com/MiguelSavignano/node-credentials",
   "keywords": [
@@ -16,12 +16,17 @@
   "author": "migue.masx@gmail.com",
   "license": "MIT",
   "dependencies": {
+    "@actions/core": "^1.2.4",
+    "@actions/github": "^4.0.0",
+    "@actions/glob": "^0.1.0",
     "command-line-args": "^5.0.2",
     "command-line-usage": "^5.0.5",
     "crypto": "^1.0.1",
-    "ejs": "^2.6.1"
+    "ejs": "^2.6.1",
+    "xml2js": "^0.4.23"
   },
   "devDependencies": {
-    "jest": "^26.4.2"
+    "jest": "^26.4.2",
+    "jest-junit": "^11.0.1"
   }
 }
