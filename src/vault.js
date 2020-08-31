@@ -84,9 +84,15 @@ class Vault {
   }
 
   getMasterKey() {
-    return (
-      this.masterKey || process.env.NODE_MASTER_KEY || fs.readFileSync(`${this.credentialsFilePath}.key`, 'utf8').trim()
-    );
+    try {
+      return (
+        this.masterKey ||
+        process.env.NODE_MASTER_KEY ||
+        fs.readFileSync(`${this.credentialsFilePath}.key`, 'utf8').trim()
+      );
+    } catch {
+      return undefined;
+    }
   }
 }
 module.exports.Vault = Vault;

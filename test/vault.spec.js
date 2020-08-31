@@ -54,7 +54,7 @@ describe('node-vault credentials with auto config', () => {
       myKey: 'password',
       myKeyEnv: 'MY_ENV_CREDENTIAL',
     });
-    process.env.NODE_MASTER_KEY = undefined;
+    delete process.env.NODE_MASTER_KEY;
   });
 });
 

@@ -10,9 +10,7 @@ const parseCommand = () => {
   const argv = mainOptions._unknown || [];
   const globalOptions = [{ name: 'path', type: String }];
   const options = commandLineArgs(globalOptions, { argv });
-  if (!options.path) {
-    options.path = '.';
-  }
+
   return {
     command: mainOptions.command,
     options: options || defaultOptions,
