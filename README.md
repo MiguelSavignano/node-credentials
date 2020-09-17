@@ -43,20 +43,6 @@ NODE_MASTER_KEY=$MASTER_KEY npx node-credentials decrypt --path credentials.json
 
 ```
 
-## CLI
-
-```
-npx node-credentials help
-```
-
-## API
-
-### config
-
-| Argument | Type   | Description          | Default          |
-| -------- | ------ | -------------------- | ---------------- |
-| path     | String | file path to encrypt | credentials.json |
-
 ## Setup for NodeJs projects
 
 Create a credentials.json file
@@ -104,20 +90,15 @@ NODE_MASTER_KEY=my-credential-key server.js
 
 ### Edit credentials
 
-For chage your credentials.json.enc you can decrypt and encrypt using the CLI
+For update your credentials.json.enc you can decrypt and encrypt using the CLI
 
-- Decrypt
+The edit command allow to decrypt the file and encrypt.
 
 ```
-npx node-credentials decrypt
-# or
 npx node-credentials edit
-```
-
-- Encrypt
-
-```
-npx node-credentials encrypt
+# decrypt credentisl.json.env
+npx node-credentials edit
+# encrypt credentisl.json.env
 ```
 
 ### credentialsEnv
@@ -186,4 +167,20 @@ credentials file accept template variables for process env object
     }
   }
 }
+```
+
+## CLI API
+
+```
+Command List
+
+  help      help
+  init      create credentials.json.key and encrypt your credentials.json
+  encrypt   encrypt credentials.json
+  decrypt   decrypt credentials.json.enc
+  edit      decrypt/encrypt
+
+Options
+
+  -p, --path   Path for credentials.json file
 ```

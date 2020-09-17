@@ -42,6 +42,16 @@ const encrypt = ({ path }) => {
 
 const edit = ({ path }) => {
   const vault = new Vault({ credentialsFilePath: path });
+
+  if (fs.existsSync(`${vault.credentialsFilePath}.enc`)) {
+    decrypt({ path });
+  } else if (fs.existsSync(`${vault.credentialsFilePath}`)) {
+    encrypt({ path });
+  }
+};
+
+const decrypt = ({ path }) => {
+  const vault = new Vault({ credentialsFilePath: path });
   if (!fs.existsSync(`${vault.credentialsFilePath}.enc`)) {
     console.log('Error credentials.json.enc not exists');
   } else {
@@ -69,7 +79,8 @@ const help = () => {
           summary: 'create credentials.json.key and encrypt your credentials.json',
         },
         { name: 'encrypt', summary: 'encrypt credentials.json' },
-        { name: 'edit', summary: 'decrypt alias' },
+        { name: 'decrypt', summary: 'decrypt credentials.json.enc' },
+        { name: 'edit', summary: 'decrypt/encrypt' },
       ],
     },
     {
