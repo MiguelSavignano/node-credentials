@@ -96,9 +96,9 @@ The edit command allow to decrypt the file and encrypt.
 
 ```
 npx node-credentials edit
-# decrypt credentisl.json.env
+# decrypt credentisl.json.enc
 npx node-credentials edit
-# encrypt credentisl.json.env
+# encrypt credentisl.json.enc
 ```
 
 ### credentialsEnv
