@@ -4,9 +4,7 @@ const Vault = require('./vault').Vault;
 
 const init = ({ path }) => {
   const vault = new Vault({ credentialsFilePath: path });
-  if (fs.existsSync(`${vault.credentialsFilePath}.enc`)) {
-    console.log('Warning credentials.json.enc exists, ensure decrypt file before generate new key');
-  } else if (fs.existsSync(`${vault.credentialsFilePath}.key`)) {
+  if (fs.existsSync(`${vault.credentialsFilePath}.key`)) {
     console.log('Warning credentials.json.key exists, delete credentials.json.key to generate new key');
   } else {
     const masterKey = vault.getMasterKey(false) || vault.createNewKey();
@@ -64,7 +62,7 @@ const help = () => {
           summary: 'create credentials.json.key and encrypt your credentials.json',
         },
         { name: 'encrypt', summary: 'encrypt credentials.json' },
-        { name: 'decrypt', summary: 'decrypt credentials.json.enc' },
+        { name: 'decrypt', summary: 'decrypt credentials.json' },
         { name: 'edit', summary: 'decrypt/encrypt' },
       ],
     },
