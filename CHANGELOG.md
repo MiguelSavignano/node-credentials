@@ -1,3 +1,11 @@
+### v0.6.1
+
+- Remove unused npm packages
+
+### v0.6.0
+
+- Allow decrypt or encrypt with edit command [#22](https://github.com/MiguelSavignano/node-credentials/pull/22)
+
 ### v0.5.0
 
 - Encrypt with any key length #20
