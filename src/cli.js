@@ -1,6 +1,7 @@
 const fs = require('fs');
 const commandLineUsage = require('command-line-usage');
 const Vault = require('./vault').Vault;
+const { editContentInEditor } = require('./editContentInEditor');
 
 const init = ({ path }) => {
   const vault = new Vault({ credentialsFilePath: path });
@@ -28,13 +29,17 @@ const encrypt = async ({ path }) => {
     .catch(console.error);
 };
 
-const edit = ({ path }) => {
+const edit = async ({ path }) => {
   const vault = new Vault({ credentialsFilePath: path });
+  const masterKey = vault.getMasterKey();
 
-  if (fs.existsSync(`${vault.credentialsFilePath}.iv`)) {
-    encrypt({ path });
-  } else if (fs.existsSync(`${vault.credentialsFilePath}`)) {
-    decrypt({ path });
+  try {
+    const [content, iv] = vault.decryptFnc(masterKey, fs.readFileSync(vault.credentialsFilePath, 'utf-8'));
+    const mewContent = await editContentInEditor(content);
+    const encyptedContent = await vault.encryptFnc(masterKey, mewContent, iv);
+    fs.writeFileSync(vault.credentialsFilePath, encyptedContent);
+  } catch (err) {
+    console.error(err);
   }
 };
 
