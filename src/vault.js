@@ -40,10 +40,11 @@ class Vault {
     this._credentialsEnv = get(credentials, this.nodeEnv, {});
   }
 
-  config({ path } = {}) {
-    if (path) {
-      this.credentialsFilePath = path;
-    }
+  config({ masterKey, path, nodeEnv } = {}) {
+    if (masterKey) this.masterKey = masterKey;
+    if (path) this.credentialsFilePath = path;
+    if (nodeEnv) this.nodeEnv = this.nodeEnv;
+
     const key = this.getMasterKey();
     const text = fs.readFileSync(`${this.credentialsFilePath}`, 'utf8');
     const [credentialsText, iv] = this.decryptFnc(key, text);

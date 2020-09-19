@@ -1,6 +1,7 @@
 interface IConfigOptions {
-  keyValue?: string;
+  masterKey?: string;
   path?: string;
+  nodeEnv?: string;
 }
 
 declare class Vault {
