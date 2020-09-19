@@ -90,15 +90,10 @@ NODE_MASTER_KEY=my-credential-key server.js
 
 ### Edit credentials
 
-For update your credentials.json you can decrypt and encrypt using the CLI
-
-The edit command allow to decrypt the file and encrypt.
+The edit command allow to edit the file in a text editor; decrypting before open the file and encrypting after close the file.
 
 ```
-npx node-credentials edit
-# decrypt credentisl.json
-npx node-credentials edit
-# encrypt credentisl.json
+EDITOR=nano npx node-credentials edit
 ```
 
 ### credentialsEnv
@@ -178,7 +173,7 @@ Command List
   init      create credentials.json.key and encrypt your credentials.json
   encrypt   encrypt credentials.json
   decrypt   decrypt credentials.json
-  edit      decrypt/encrypt
+  edit      decrypt/encrypt in text editor
 
 Options
 

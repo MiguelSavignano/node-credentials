@@ -1,3 +1,16 @@
+### v1.0.0
+
+- Remove credentials.json.enc use the same credentials.json file to encrypt or decrypt.
+- Allow edit credentials in a text editor can decrypt before opening the file and encrypt after closing the file.
+
+```
+EDITOR=nano npx node-credentials edit
+```
+
+Breaking change:
+
+Should decrypt the credentials.json.enc before update node-credentials version.
+
 ### v0.6.1
 
 - Remove unused npm packages
