@@ -9,12 +9,11 @@ const init = ({ path }) => {
   } else if (fs.existsSync(`${vault.credentialsFilePath}.key`)) {
     console.log('Warning credentials.json.key exists, delete credentials.json.key to generate new key');
   } else {
-    const masterKey = vault.getMasterKey() || vault.createNewKey();
+    const masterKey = vault.getMasterKey(false) || vault.createNewKey();
     fs.writeFileSync(`${vault.credentialsFilePath}.key`, masterKey);
     vault
       .encryptFile()
       .then(() => {
-        fs.unlinkSync(`${vault.credentialsFilePath}`);
         try {
           fs.unlinkSync(`${vault.credentialsFilePath}.iv`);
         } catch {}
