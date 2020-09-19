@@ -1,98 +1,90 @@
-var fs = require('fs');
+const fs = require('fs');
+const {
+  DECRYPTED_CREDENTIALS,
+  ENCRYPTED_CREDENTIALS_BY_COUNTRY,
+  ENCRYPTED_CREDENTIALS,
+} = require('./examples/credentialsFiles');
+const { writeTempFile } = require('./helpers/writeTempFile');
+
 const Vault = require('../src/vault').Vault;
 require('./helpers/matchers');
+
 let NODE_MASTER_KEY = '8aa93853b3ff01c5b5447529a9c33cb9';
 const MY_ENV_CREDENTIAL = 'MY_ENV_CREDENTIAL';
 
+process.env.NODE_MASTER_KEY = NODE_MASTER_KEY;
 process.env.ENV_CREDENTIAL = MY_ENV_CREDENTIAL;
 
-describe('node-vault', () => {
-  let credentialsFilePath = __dirname + '/examples/encrypt/credentials.json';
-
-  afterEach(() => {
-    fs.unlinkSync(`${credentialsFilePath}.enc`);
-  });
-
+describe.only('node-vault', () => {
   test('encryptFile', async () => {
-    const vault = new Vault({ credentialsFilePath });
+    const { path } = writeTempFile(DECRYPTED_CREDENTIALS);
 
-    expect(
-      await vault.encryptFile({
-        keyValue: NODE_MASTER_KEY,
-      })
-    ).validEncryptedFile();
-  });
-});
-
-describe('node-vault', () => {
-  let credentialsFilePath = __dirname + '/examples/decrypt/credentials.json';
-
-  afterEach(() => {
-    fs.unlinkSync(`${credentialsFilePath}`);
-  });
-  test('editCredentials', () => {
-    const vault = new Vault({ credentialsFilePath });
-    const result = vault.editCredentials({
-      keyValue: NODE_MASTER_KEY,
+    const vault = new Vault({
+      credentialsFilePath: path,
     });
-    const fileText = fs.readFileSync(result, 'utf8');
+
+    expect(await vault.encryptFile()).validEncryptedFile();
+    fs.unlinkSync(path);
+  });
+
+  test('decryptFile', async () => {
+    const { path } = writeTempFile(ENCRYPTED_CREDENTIALS);
+
+    const vault = new Vault({
+      credentialsFilePath: path,
+    });
+    vault.decryptFile();
+    const fileText = fs.readFileSync(path, 'utf8');
 
     expect(JSON.parse(fileText)).toEqual({
       myKey: 'password',
       myKeyEnv: '<%= process.env.ENV_CREDENTIAL %>',
     });
+    fs.unlinkSync(path);
   });
-});
-
-describe('node-vault credentials with auto config', () => {
-  let credentialsFilePath = __dirname + '/examples/decrypt/credentials.json';
-
-  test('credentials', () => {
-    const vault = new Vault({ credentialsFilePath });
-    process.env.NODE_MASTER_KEY = NODE_MASTER_KEY;
-    expect(vault.credentials).toEqual({
-      myKey: 'password',
-      myKeyEnv: 'MY_ENV_CREDENTIAL',
-    });
-    delete process.env.NODE_MASTER_KEY;
-  });
-});
-
-describe('node-vault config', () => {
-  let credentialsFilePath = __dirname + '/examples/decrypt/credentials.json';
 
   test('config', () => {
-    const vault = new Vault({ credentialsFilePath });
-    vault.config({
-      keyValue: NODE_MASTER_KEY,
-    });
+    const { path } = writeTempFile(ENCRYPTED_CREDENTIALS);
+
+    const vault = new Vault({ credentialsFilePath: path });
+    vault.config();
     expect(vault.credentials).toEqual({
       myKey: 'password',
       myKeyEnv: 'MY_ENV_CREDENTIAL',
     });
   });
-});
 
-describe('node-vault config credentialsFilePath', () => {
-  test('config', () => {
-    const vault = new Vault();
-    vault.config({
-      keyValue: NODE_MASTER_KEY,
-      path: __dirname + '/examples/decrypt/credentials.json',
+  test('credentials with auto config', () => {
+    const { path } = writeTempFile(ENCRYPTED_CREDENTIALS);
+
+    const vault = new Vault({
+      credentialsFilePath: path,
     });
+
     expect(vault.credentials).toEqual({
       myKey: 'password',
       myKeyEnv: 'MY_ENV_CREDENTIAL',
     });
+    expect(vault.configured).toEqual(true);
+  });
+
+  test('createNewKey', () => {
+    const { path } = writeTempFile(ENCRYPTED_CREDENTIALS);
+
+    const vault = new Vault({ credentialsFilePath: path });
+    expect(vault.createNewKey()).toHaveLength(32);
+    fs.unlinkSync(`${path}.key`);
   });
 });
 
 describe('node-vault credentialsEnv', () => {
+  const { path } = writeTempFile(ENCRYPTED_CREDENTIALS);
+
   const vaultFactory = ({ nodeEnv }) => {
     return new Vault({
       nodeEnv,
       masterKey: NODE_MASTER_KEY,
-      credentialsFilePath: __dirname + '/examples/encryptDecryptEnv/credentials.json',
+      credentialsFilePath: path,
     });
   };
 
@@ -118,24 +110,13 @@ describe('node-vault credentialsEnv', () => {
   });
 
   test('NODE_ENV=es.production', () => {
+    const { path } = writeTempFile(ENCRYPTED_CREDENTIALS_BY_COUNTRY);
+
     const vault = new Vault({
       nodeEnv: 'es.development',
-      masterKey: NODE_MASTER_KEY,
-      credentialsFilePath: __dirname + '/examples/encryptDecryptEnv/credentialsByCountry.json',
+      credentialsFilePath: path,
     });
 
     expect(vault.credentialsEnv).toEqual({ myKey: 'ES password' });
-  });
-});
-
-describe('node-vault', () => {
-  let credentialsFilePath = __dirname + '/examples/encryptDecryptEnv/credentials.json';
-  afterEach(() => {
-    fs.unlinkSync(`${credentialsFilePath}.key`);
-  });
-
-  test('newKey', () => {
-    const vault = new Vault({ credentialsFilePath });
-    expect(vault.createNewKey()).toHaveLength(32);
   });
 });

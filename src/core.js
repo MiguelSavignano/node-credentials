@@ -96,6 +96,9 @@ const decrypt = (key, text) => {
   }
   const parts = text.split('--', 2);
   const ciphertext = new Buffer.from(parts[0], 'base64');
+  if (!parts[1]) {
+    throw new Error(`Invalid encrypt format for [${text.substring(0, 5)}**]`);
+  }
   const iv = new Buffer.from(parts[1], 'base64');
 
   const decipher = crypto.createDecipheriv(algorithm, key, iv);

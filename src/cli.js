@@ -23,41 +23,27 @@ const init = ({ path }) => {
   }
 };
 
-const encrypt = ({ path }) => {
+const encrypt = async ({ path }) => {
   const vault = new Vault({ credentialsFilePath: path });
-  if (fs.existsSync(`${vault.credentialsFilePath}.key`) || process.env.NODE_MASTER_KEY) {
-    vault
-      .encryptFile()
-      .then(() => {
-        fs.unlinkSync(`${vault.credentialsFilePath}`);
-        try {
-          fs.unlinkSync(`${vault.credentialsFilePath}.iv`);
-        } catch {}
-      })
-      .catch((error) => console.error(error));
-  } else {
-    console.log('Warning credentials.json.key not exists, create new key with init');
-  }
+  vault
+    .encryptFile()
+    .then(() => {})
+    .catch(console.error);
 };
 
 const edit = ({ path }) => {
   const vault = new Vault({ credentialsFilePath: path });
 
-  if (fs.existsSync(`${vault.credentialsFilePath}.enc`)) {
-    decrypt({ path });
-  } else if (fs.existsSync(`${vault.credentialsFilePath}`)) {
+  if (fs.existsSync(`${vault.credentialsFilePath}.iv`)) {
     encrypt({ path });
+  } else if (fs.existsSync(`${vault.credentialsFilePath}`)) {
+    decrypt({ path });
   }
 };
 
 const decrypt = ({ path }) => {
   const vault = new Vault({ credentialsFilePath: path });
-  if (!fs.existsSync(`${vault.credentialsFilePath}.enc`)) {
-    console.log('Error credentials.json.enc not exists');
-  } else {
-    vault.editCredentials();
-    fs.unlinkSync(`${vault.credentialsFilePath}.enc`);
-  }
+  vault.decryptFile();
 };
 
 const help = () => {
@@ -96,6 +82,6 @@ module.exports = {
   init,
   encrypt,
   edit,
-  decrypt: edit,
+  decrypt,
   help,
 };
