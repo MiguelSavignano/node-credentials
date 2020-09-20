@@ -1,5 +1,8 @@
 const crypto = require('crypto');
+const YAML = require('yaml');
 const { transformValues } = require('./transformValues');
+
+YAML.defaultOptions.merge = true;
 const algorithm = 'aes-256-cbc';
 
 const generateIV = () =>
@@ -34,12 +37,21 @@ const encrypt = async (encKey, text, ivBase64 = null) => {
   return cipherBundle;
 };
 
-const encryptJSON = async (encKey, text, ivBase64 = null) => {
-  const obj = JSON.parse(text);
+const encryptObject = async (encKey, obj, ivBase64 = null) => {
   const objWithValuesEncrypted = await transformValues(obj, async (value) => {
     return encrypt(encKey, value.toString(), ivBase64);
   });
-  return JSON.stringify(objWithValuesEncrypted, 0, 2);
+  return objWithValuesEncrypted;
+};
+
+const encryptJSON = async (encKey, text, ivBase64 = null) => {
+  const result = await encryptObject(encKey, JSON.parse(text), ivBase64);
+  return JSON.stringify(result, 0, 2);
+};
+
+const encryptYAML = async (encKey, text, ivBase64 = null) => {
+  const result = await encryptObject(encKey, YAML.parse(text), ivBase64);
+  return YAML.stringify(result, 0, 2);
 };
 
 const decrypt = (encKey, text) => {
@@ -60,19 +72,28 @@ const decrypt = (encKey, text) => {
   return [plaintext, parts[1]];
 };
 
-const decryptJSON = (encKey, text) => {
-  const obj = JSON.parse(text);
+const decryptObject = (encKey, obj) => {
   let lastIv;
   const objWithValuesDecrypted = transformValues(obj, (value) => {
     let [plaintext, iv] = decrypt(encKey, value);
     lastIv = iv;
     return plaintext;
   });
+  return [objWithValuesDecrypted, lastIv];
+};
+
+const decryptJSON = (encKey, text) => {
+  const [objWithValuesDecrypted, lastIv] = decryptObject(encKey, JSON.parse(text));
   return [JSON.stringify(objWithValuesDecrypted, 0, 2), lastIv];
+};
+
+const decryptYAML = (encKey, text) => {
+  const [objWithValuesDecrypted, lastIv] = decryptObject(encKey, YAML.parse(text));
+  return [YAML.stringify(objWithValuesDecrypted, 0, 2), lastIv];
 };
 
 const newKey = () => {
   return crypto.randomBytes(16).toString('hex');
 };
 
-module.exports = { newKey, encrypt, decryptJSON, decrypt, encryptJSON };
+module.exports = { newKey, encrypt, decryptJSON, decrypt, encryptJSON, encryptYAML, decryptYAML };
