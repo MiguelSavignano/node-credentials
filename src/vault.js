@@ -1,20 +1,20 @@
+const YAML = require('yaml');
+const { get } = require('lodash');
+const fs = require('fs');
 const core = require('./core');
 const render = require('./template-render').render;
-const fs = require('fs');
-const { get } = require('lodash');
 
 class Vault {
   constructor({
-    decryptFnc = core.decryptJSON,
-    encryptFnc = core.encryptJSON,
+    decryptFnc,
+    encryptFnc,
     credentialsFilePath = 'credentials.json',
     nodeEnv = process.env.NODE_CREDENTIALS_ENV || process.env.NODE_ENV || 'development',
     masterKey,
   } = {}) {
     this.credentialsFilePath = credentialsFilePath;
     this.format = this._inferFormat();
-    this.decryptFnc = decryptFnc;
-    this.encryptFnc = encryptFnc;
+    this._setCredentialsFormatAdapter(decryptFnc, encryptFnc);
     this.masterKey = masterKey;
     this._credentials = {};
     this._credentialsEnv = {};
@@ -43,6 +43,26 @@ class Vault {
     return 'yaml';
   }
 
+  _setCredentialsFormatAdapter(decryptFnc, encryptFnc) {
+    if (decryptFnc && encryptFnc) {
+      this.decryptFnc = decryptFnc;
+      this.encryptFnc = encryptFnc;
+      this.parser = JSON;
+    } else if (this.format === 'json') {
+      this.decryptFnc = core.decryptJSON;
+      this.encryptFnc = core.encryptJSON;
+      this.parser = JSON;
+    } else if (this.format === 'yaml') {
+      this.decryptFnc = core.decryptYAML;
+      this.encryptFnc = core.encryptYAML;
+      this.parser = YAML;
+    } else {
+      this.decryptFnc = core.decrypt;
+      this.encryptFnc = core.encrypt;
+      this.parser = JSON;
+    }
+  }
+
   setCredentials(credentials) {
     this._credentials = { ...credentials };
     this._credentialsEnv = get(credentials, this.nodeEnv, {});
@@ -57,7 +77,7 @@ class Vault {
     const text = fs.readFileSync(`${this.credentialsFilePath}`, 'utf8');
     const [credentialsText, iv] = this.decryptFnc(key, text);
     const credentialsTextRendered = render(credentialsText);
-    const credentials = JSON.parse(credentialsTextRendered);
+    const credentials = this.parser.parse(credentialsTextRendered);
     this.setCredentials(credentials);
     this.configured = true;
     return credentials;
