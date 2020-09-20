@@ -1,12 +1,14 @@
+const YAML = require('yaml');
+
 const core = require('../src/core');
 require('./helpers/matchers');
-const complexJSON = require('./examples/transformValues/complex.json');
 
 describe('core', () => {
   let NODE_MASTER_KEY = '8aa93853b3ff01c5b5447529a9c33cb9';
   const SHORT_NODE_MASTER_KEY = '12345678';
   let credentials = { key: 'value' };
   let credentialsString = JSON.stringify(credentials);
+
   test('encrypt', async () => {
     const result = await core.encrypt(NODE_MASTER_KEY, credentialsString);
     expect(result).validEncrypted();
@@ -15,6 +17,22 @@ describe('core', () => {
   test('encrypt with any key length', async () => {
     const result = await core.encrypt(SHORT_NODE_MASTER_KEY, credentialsString);
     expect(result).validEncrypted();
+  });
+
+  test('encryptYAML', async () => {
+    const yaml = `
+      key: value
+      data:
+      - data1
+      - data2
+    `;
+
+    const result = await core.encryptYAML(NODE_MASTER_KEY, yaml);
+    const data = YAML.parse(result);
+
+    expect(data.key).validEncrypted();
+    expect(data.data[0]).validEncrypted();
+    expect(data.data[1]).validEncrypted();
   });
 
   test('decrypt', async () => {
@@ -31,16 +49,6 @@ describe('core', () => {
       'YhSWFEmk0OOG1qQDmjkEjg==--hfHcXE55MQ0bDOHho2SLag=='
     );
     expect(JSON.parse(result)).toEqual(credentials);
-  });
-
-  test('transformValues sync', () => {
-    const result = core.transformValues(complexJSON, (value) => `${value} MOCK`);
-    expect(result).toMatchSnapshot();
-  });
-
-  test('transformValues async', async () => {
-    const result = await core.transformValues(complexJSON, async (value) => `${value} MOCK`);
-    expect(result).toMatchSnapshot();
   });
 
   test('newKey', () => {

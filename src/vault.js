@@ -1,19 +1,23 @@
+const YAML = require('yaml');
+const { get } = require('lodash');
+const fs = require('fs');
 const core = require('./core');
 const render = require('./template-render').render;
-const fs = require('fs');
-const { get } = require('lodash');
 
 class Vault {
   constructor({
-    decryptFnc = core.decryptJSON,
-    encryptFnc = core.encryptJSON,
-    credentialsFilePath = 'credentials.json',
+    decryptFnc,
+    encryptFnc,
+    credentialsFilePath,
     nodeEnv = process.env.NODE_CREDENTIALS_ENV || process.env.NODE_ENV || 'development',
     masterKey,
   } = {}) {
-    this.decryptFnc = decryptFnc;
-    this.encryptFnc = encryptFnc;
-    this.credentialsFilePath = credentialsFilePath;
+    this.credentialsFilePath = this._inferCredentialsFilePath(credentialsFilePath);
+    this.format = this._inferFormat();
+    const adapter = this._getAdapter(decryptFnc, encryptFnc);
+    this.decryptFnc = adapter.decryptFnc;
+    this.encryptFnc = adapter.encryptFnc;
+    this.parser = adapter.parser;
     this.masterKey = masterKey;
     this._credentials = {};
     this._credentialsEnv = {};
@@ -35,6 +39,33 @@ class Vault {
     return this._credentialsEnv;
   }
 
+  _inferCredentialsFilePath(credentialsFilePath) {
+    if (credentialsFilePath) return credentialsFilePath;
+    if (fs.existsSync('credentials.json')) return 'credentials.json';
+    if (fs.existsSync('credentials.yaml')) return 'credentials.yaml';
+    if (fs.existsSync('credentials.yml')) return 'credentials.yml';
+    return 'credentials.json';
+  }
+
+  _inferFormat() {
+    if (/^.*\.(json)$/.test(this.credentialsFilePath)) {
+      return 'json';
+    }
+    return 'yaml';
+  }
+
+  _getAdapter(decryptFnc, encryptFnc) {
+    if (decryptFnc && encryptFnc) {
+      return { parser: JSON, decryptFnc, encryptFnc };
+    } else if (this.format === 'json') {
+      return { parser: JSON, decryptFnc: core.decryptJSON, encryptFnc: core.encryptJSON };
+    } else if (this.format === 'yaml') {
+      return { parser: YAML, decryptFnc: core.decryptYAML, encryptFnc: core.encryptYAML };
+    } else {
+      return { parser: JSON, decryptFnc: core.decrypt, encryptFnc: core.encrypt };
+    }
+  }
+
   setCredentials(credentials) {
     this._credentials = { ...credentials };
     this._credentialsEnv = get(credentials, this.nodeEnv, {});
@@ -49,7 +80,7 @@ class Vault {
     const text = fs.readFileSync(`${this.credentialsFilePath}`, 'utf8');
     const [credentialsText, iv] = this.decryptFnc(key, text);
     const credentialsTextRendered = render(credentialsText);
-    const credentials = JSON.parse(credentialsTextRendered);
+    const credentials = this.parser.parse(credentialsTextRendered);
     this.setCredentials(credentials);
     this.configured = true;
     return credentials;
