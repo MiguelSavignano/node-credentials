@@ -11,9 +11,10 @@ class Vault {
     nodeEnv = process.env.NODE_CREDENTIALS_ENV || process.env.NODE_ENV || 'development',
     masterKey,
   } = {}) {
+    this.credentialsFilePath = credentialsFilePath;
+    this.format = this._inferFormat();
     this.decryptFnc = decryptFnc;
     this.encryptFnc = encryptFnc;
-    this.credentialsFilePath = credentialsFilePath;
     this.masterKey = masterKey;
     this._credentials = {};
     this._credentialsEnv = {};
@@ -33,6 +34,13 @@ class Vault {
       this.config();
     }
     return this._credentialsEnv;
+  }
+
+  _inferFormat() {
+    if (/^.*\.(json)$/.test(this.credentialsFilePath)) {
+      return 'json';
+    }
+    return 'yaml';
   }
 
   setCredentials(credentials) {

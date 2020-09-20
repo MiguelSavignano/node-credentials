@@ -1,6 +1,5 @@
 const core = require('../src/core');
 require('./helpers/matchers');
-const complexJSON = require('./examples/transformValues/complex.json');
 
 describe('core', () => {
   let NODE_MASTER_KEY = '8aa93853b3ff01c5b5447529a9c33cb9';
@@ -31,16 +30,6 @@ describe('core', () => {
       'YhSWFEmk0OOG1qQDmjkEjg==--hfHcXE55MQ0bDOHho2SLag=='
     );
     expect(JSON.parse(result)).toEqual(credentials);
-  });
-
-  test('transformValues sync', () => {
-    const result = core.transformValues(complexJSON, (value) => `${value} MOCK`);
-    expect(result).toMatchSnapshot();
-  });
-
-  test('transformValues async', async () => {
-    const result = await core.transformValues(complexJSON, async (value) => `${value} MOCK`);
-    expect(result).toMatchSnapshot();
   });
 
   test('newKey', () => {
