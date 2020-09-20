@@ -10,7 +10,7 @@ const generateIV = () =>
     });
   });
 
-const isInvalidKey = (key) => key.length != 32;
+const isInvalidKey = (encKey) => encKey.length != 32;
 
 const generateValidKey = (baseKey) => {
   const hash = crypto.createHash('sha256');
@@ -18,13 +18,13 @@ const generateValidKey = (baseKey) => {
   return hash.digest();
 };
 
-const encrypt = async (key, text, ivBase64 = null) => {
-  if (isInvalidKey(key)) {
-    key = generateValidKey(key);
+const encrypt = async (encKey, text, ivBase64 = null) => {
+  if (isInvalidKey(encKey)) {
+    encKey = generateValidKey(encKey);
   }
 
   const iv = ivBase64 ? new Buffer.from(ivBase64, 'base64') : await generateIV();
-  const cipher = crypto.createCipheriv(algorithm, key, iv);
+  const cipher = crypto.createCipheriv(algorithm, encKey, iv);
   let ciphertext = '';
   ciphertext += cipher.update(text, 'utf-8', 'binary');
   ciphertext += cipher.final('binary');
@@ -35,17 +35,16 @@ const encrypt = async (key, text, ivBase64 = null) => {
 };
 
 const encryptJSON = async (encKey, text, ivBase64 = null) => {
-  ivBase64 = ivBase64 || (await generateIV()).toString('base64');
   const obj = JSON.parse(text);
   const objWithValuesEncrypted = await transformValues(obj, async (value) => {
-    return encrypt(encKey, `${value}`, ivBase64);
+    return encrypt(encKey, value.toString(), ivBase64);
   });
   return JSON.stringify(objWithValuesEncrypted, 0, 2);
 };
 
-const decrypt = (key, text) => {
-  if (isInvalidKey(key)) {
-    key = generateValidKey(key);
+const decrypt = (encKey, text) => {
+  if (isInvalidKey(encKey)) {
+    encKey = generateValidKey(encKey);
   }
   const parts = text.split('--', 2);
   const ciphertext = new Buffer.from(parts[0], 'base64');
@@ -54,7 +53,7 @@ const decrypt = (key, text) => {
   }
   const iv = new Buffer.from(parts[1], 'base64');
 
-  const decipher = crypto.createDecipheriv(algorithm, key, iv);
+  const decipher = crypto.createDecipheriv(algorithm, encKey, iv);
   let plaintext = '';
   plaintext += decipher.update(ciphertext);
   plaintext += decipher.final();
