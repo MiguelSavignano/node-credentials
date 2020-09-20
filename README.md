@@ -11,7 +11,7 @@ npm install node-credentials --save
 
 ## Usage
 
-### Encrypt and decrypt json files
+### Encrypt and decrypt json|yaml files
 
 ```json
 // credentials.json
@@ -27,7 +27,7 @@ npm install node-credentials --save
 NODE_MASTER_KEY=$MASTER_KEY npx node-credentials encrypt --path credentials.json
 ```
 
-Only encrypted json values.
+Only encrypted object values.
 
 ```json
 {
@@ -45,7 +45,9 @@ NODE_MASTER_KEY=$MASTER_KEY npx node-credentials decrypt --path credentials.json
 
 ## Setup for NodeJs projects
 
-Create a credentials.json file
+Create a credentials.json or credentials.yaml file
+
+Example:
 
 ```json
 {

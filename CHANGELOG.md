@@ -1,3 +1,7 @@
+### v1.1.0
+
+- Allow use credentials file with yaml sintax
+
 ### v1.0.0
 
 - Remove credentials.json.enc use the same credentials.json file to encrypt or decrypt.
