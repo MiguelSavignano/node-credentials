@@ -14,7 +14,10 @@ class Vault {
   } = {}) {
     this.credentialsFilePath = this._inferCredentialsFilePath(credentialsFilePath);
     this.format = this._inferFormat();
-    this._setCredentialsFormatAdapter(decryptFnc, encryptFnc);
+    const adapter = this._getAdapter(decryptFnc, encryptFnc);
+    this.decryptFnc = adapter.decryptFnc;
+    this.encryptFnc = adapter.encryptFnc;
+    this.parser = adapter.parser;
     this.masterKey = masterKey;
     this._credentials = {};
     this._credentialsEnv = {};
@@ -50,23 +53,15 @@ class Vault {
     return 'yaml';
   }
 
-  _setCredentialsFormatAdapter(decryptFnc, encryptFnc) {
+  _getAdapter(decryptFnc, encryptFnc) {
     if (decryptFnc && encryptFnc) {
-      this.decryptFnc = decryptFnc;
-      this.encryptFnc = encryptFnc;
-      this.parser = JSON;
+      return { parser: JSON, decryptFnc, encryptFnc };
     } else if (this.format === 'json') {
-      this.decryptFnc = core.decryptJSON;
-      this.encryptFnc = core.encryptJSON;
-      this.parser = JSON;
+      return { parser: JSON, decryptFnc: core.decryptJSON, encryptFnc: core.encryptJSON };
     } else if (this.format === 'yaml') {
-      this.decryptFnc = core.decryptYAML;
-      this.encryptFnc = core.encryptYAML;
-      this.parser = YAML;
+      return { parser: YAML, decryptFnc: core.decryptYAML, encryptFnc: core.encryptYAML };
     } else {
-      this.decryptFnc = core.decrypt;
-      this.encryptFnc = core.encrypt;
-      this.parser = JSON;
+      return { parser: JSON, decryptFnc: core.decrypt, encryptFnc: core.encrypt };
     }
   }
 
