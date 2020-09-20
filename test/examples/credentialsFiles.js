@@ -22,6 +22,19 @@ const ENCRYPTED_CREDENTIALS_BY_COUNTRY = {
     },
   },
 };
+
+const ENCRYPTED_CREDENTIALS_BY_ENV = {
+  development: {
+    myKey: 'lS0EEUI3YfnJvjNlQUq8NQrHSWNIW7OupQPYWMl8CJI=--q5V4y7tw2m84/faTZ8iQUA==',
+  },
+  test: {
+    myKey: 'c3z13L5lt+sbUsW7ZAEpmQ==--RCxwxLjwWe0uRy8z3yNVBA==',
+  },
+  production: {
+    myKey: 'LcRsch3a9TwWo+4k+KjZWzgi8Lq4RboOTQ9HeQbBSyc6RwTcMhZ6PIb/7bPXSRRK--jcVpnY+Hkdiv4gs75p8fZg==',
+  },
+};
+
 const ENCRYPTED_CREDENTIALS = {
   myKey: 'Gum+XHqHtKmFG5kojUpAZg==--gxV2qVVHRWNn9AqrSQ6MTA==',
   myKeyEnv: 'yTwUP5dm9regseZ4KSiIeqp2fgLhSmW0FmzsFNpWvcQk6jmMyStKkDknXm0WxsO2--gxV2qVVHRWNn9AqrSQ6MTA==',
@@ -33,6 +46,7 @@ const DECRYPTED_CREDENTIALS = {
 };
 
 module.exports = {
+  ENCRYPTED_CREDENTIALS_BY_ENV,
   ENCRYPTED_CREDENTIALS_BY_COUNTRY,
   ENCRYPTED_CREDENTIALS,
   DECRYPTED_CREDENTIALS,

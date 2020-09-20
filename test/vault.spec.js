@@ -2,6 +2,7 @@ const fs = require('fs');
 const {
   DECRYPTED_CREDENTIALS,
   ENCRYPTED_CREDENTIALS_BY_COUNTRY,
+  ENCRYPTED_CREDENTIALS_BY_ENV,
   ENCRYPTED_CREDENTIALS,
 } = require('./examples/credentialsFiles');
 const { writeTempFile } = require('./helpers/writeTempFile');
@@ -15,7 +16,7 @@ const MY_ENV_CREDENTIAL = 'MY_ENV_CREDENTIAL';
 process.env.NODE_MASTER_KEY = NODE_MASTER_KEY;
 process.env.ENV_CREDENTIAL = MY_ENV_CREDENTIAL;
 
-describe.only('node-vault', () => {
+describe('node-vault', () => {
   test('encryptFile', async () => {
     const { path } = writeTempFile(DECRYPTED_CREDENTIALS);
 
@@ -78,7 +79,7 @@ describe.only('node-vault', () => {
 });
 
 describe('node-vault credentialsEnv', () => {
-  const { path } = writeTempFile(ENCRYPTED_CREDENTIALS);
+  const { path } = writeTempFile(ENCRYPTED_CREDENTIALS_BY_ENV);
 
   const vaultFactory = ({ nodeEnv }) => {
     return new Vault({
@@ -91,7 +92,7 @@ describe('node-vault credentialsEnv', () => {
   test('NODE_ENV=development', () => {
     const vault = vaultFactory({ nodeEnv: 'development' });
     expect(vault.credentialsEnv).toEqual({
-      myKey: 'password',
+      myKey: 'password development',
     });
   });
 
