@@ -43,6 +43,7 @@ class Vault {
     if (credentialsFilePath) return credentialsFilePath;
     if (fs.existsSync('credentials.json')) return 'credentials.json';
     if (fs.existsSync('credentials.yaml')) return 'credentials.yaml';
+    if (fs.existsSync('credentials.yml')) return 'credentials.yml';
     return 'credentials.json';
   }
 
