@@ -8,11 +8,11 @@ class Vault {
   constructor({
     decryptFnc,
     encryptFnc,
-    credentialsFilePath = 'credentials.json',
+    credentialsFilePath,
     nodeEnv = process.env.NODE_CREDENTIALS_ENV || process.env.NODE_ENV || 'development',
     masterKey,
   } = {}) {
-    this.credentialsFilePath = credentialsFilePath;
+    this.credentialsFilePath = this._inferCredentialsFilePath(credentialsFilePath);
     this.format = this._inferFormat();
     this._setCredentialsFormatAdapter(decryptFnc, encryptFnc);
     this.masterKey = masterKey;
@@ -34,6 +34,13 @@ class Vault {
       this.config();
     }
     return this._credentialsEnv;
+  }
+
+  _inferCredentialsFilePath(credentialsFilePath) {
+    if (credentialsFilePath) return credentialsFilePath;
+    if (fs.existsSync('credentials.json')) return 'credentials.json';
+    if (fs.existsSync('credentials.yaml')) return 'credentials.yaml';
+    return 'credentials.json';
   }
 
   _inferFormat() {
