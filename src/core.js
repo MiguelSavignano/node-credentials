@@ -59,9 +59,10 @@ const encryptJSON = async (encKey, text, ivBase64 = null) => {
 const encryptYAML = async (encKey, text, ivBase64 = null) => {
   ivBase64 = ivBase64 || await generateIV('base64')
   const doc = YAML.parseDocument(text, { merge: false });
-  doc.contents.items.map(item => {
+  doc.contents.items.forEach(item => {
     deepValuesYAMLDoc(item, (value) => {
-      return encrypt(encKey, `${value}`, base64IV);
+      if (!value) return false
+      return encrypt(encKey, value.toString(), ivBase64);
     })
   })
   return doc.toString();
@@ -101,8 +102,17 @@ const decryptJSON = (encKey, text) => {
 };
 
 const decryptYAML = (encKey, text) => {
-  const [objWithValuesDecrypted, lastIv] = decryptObject(encKey, YAML.parse(text));
-  return [YAML.stringify(objWithValuesDecrypted, 0, 2), lastIv];
+  const doc = YAML.parseDocument(text, { merge: false });
+  doc.contents.items.forEach(item => {
+    deepValuesYAMLDoc(item, (value) => {
+      if (!value) return false
+
+      let [plaintext, iv] = decrypt(encKey, value);
+      lastIv = iv;
+      return plaintext;
+    })
+  })
+  return [doc.toString(), lastIv];
 };
 
 const newKey = () => {

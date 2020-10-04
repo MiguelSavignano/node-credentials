@@ -46,13 +46,18 @@ const transformValues = (object, fnc) => {
 // https://eemeli.org/yaml/#documents
 // Document.Parsed
 const deepValuesYAMLDoc = (item, fnc) => {
-  if (item.type === "MAP") { // item Array
+  if (item.type === "PLAIN") { // Array of String
+    item.value = fnc(item.value)
+    return true
+  }
+
+  if (item.type === "MAP") { // Array of Objects
     return item.items.forEach(item2 => {
       return deepValuesYAMLDoc(item2, fnc)
     })
   }
 
-  if (item.value.type === "QUOTE_DOUBLE") { // value String
+  if (["QUOTE_DOUBLE", "QUOTE_SINGLE"].includes(item.value.type)) { // value String
     item.value.value = fnc(item.value.value)
     return true
   }
@@ -68,16 +73,15 @@ const deepValuesYAMLDoc = (item, fnc) => {
     })
   }
 
-  if (item.value.type === "ALIAS") {
-    return true
-  }
-
-  if (item.value.type === "SEQ") {
+  if (item.value.type === "SEQ") { // value array
     return item.value.items.forEach(item2 => {
       deepValuesYAMLDoc(item2, fnc)
     })
   }
-  // console.log(item.value.type)
+  // if (item.value.type === "ALIAS") {
+  //   return true
+  // }
+  // console.log(item)
 }
 
 
