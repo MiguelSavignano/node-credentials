@@ -35,6 +35,24 @@ describe('core', () => {
     expect(data.data[1]).validEncrypted();
   });
 
+  test('encryptYAML with merge keys', async () => {
+    const yaml = `
+      source: &base
+        a: "password1" # my comment 1
+        b: "password2"
+        c:
+          - ca: 1
+          - cb: 2
+      target:
+        <<: *base
+        d: "password4"
+        e: null
+    `;
+
+    const result = await core.encryptYAML(NODE_MASTER_KEY, yaml, "SlFF0O9iHgKpcds+/6nbEg==");
+    expect(result).toMatchSnapshot();
+  });
+
   test('decrypt', async () => {
     const [result, iv] = await core.decrypt(
       NODE_MASTER_KEY,

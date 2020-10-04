@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`core encryptYAML with merge keys 1`] = `
+"source:
+  &base
+  a: \\"N9176c4qD6CSk7dH7vKbeA==--SlFF0O9iHgKpcds+/6nbEg==\\" # my comment 1
+  b: \\"oiWdPL0jXuboSpQGuWlU0A==--SlFF0O9iHgKpcds+/6nbEg==\\"
+  c:
+    - ca: kIyJwEj3fkkmyBj6hZtYjw==--SlFF0O9iHgKpcds+/6nbEg==
+    - cb: hijXas73wleqP2WbWNxCqQ==--SlFF0O9iHgKpcds+/6nbEg==
+target:
+  <<: *base
+  d: \\"YojRsQ4e3F3kZNR+xnEdRg==--SlFF0O9iHgKpcds+/6nbEg==\\"
+  e: null
+"
+`;

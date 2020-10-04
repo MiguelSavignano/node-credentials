@@ -61,7 +61,7 @@ const encryptYAML = async (encKey, text, ivBase64 = null) => {
   const doc = YAML.parseDocument(text, { merge: false });
   doc.contents.items.forEach(item => {
     deepValuesYAMLDoc(item, (value) => {
-      if (!value) return false
+      if (value === null) return value
       return encrypt(encKey, value.toString(), ivBase64);
     })
   })
@@ -105,7 +105,7 @@ const decryptYAML = (encKey, text) => {
   const doc = YAML.parseDocument(text, { merge: false });
   doc.contents.items.forEach(item => {
     deepValuesYAMLDoc(item, (value) => {
-      if (!value) return false
+      if (value === null) return value
 
       let [plaintext, iv] = decrypt(encKey, value);
       lastIv = iv;
