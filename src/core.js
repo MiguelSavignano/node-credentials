@@ -5,11 +5,15 @@ const { transformValues } = require('./transformValues');
 YAML.defaultOptions.merge = true;
 const algorithm = 'aes-256-cbc';
 
-const generateIV = () =>
+const generateIV = (format = null) =>
   new Promise((resolve, reject) => {
     crypto.pseudoRandomBytes(16, (err, iv) => {
       if (err) reject(err);
-      resolve(iv);
+      if (format) {
+        resolve(iv.toString(format));
+      } else {
+        resolve(iv);
+      }
     });
   });
 
@@ -21,12 +25,12 @@ const generateValidKey = (baseKey) => {
   return hash.digest();
 };
 
-const encrypt = async (encKey, text, ivBase64 = null) => {
+const encrypt = (encKey, text, ivBase64) => {
   if (isInvalidKey(encKey)) {
     encKey = generateValidKey(encKey);
   }
 
-  const iv = ivBase64 ? new Buffer.from(ivBase64, 'base64') : await generateIV();
+  const iv = new Buffer.from(ivBase64, 'base64');
   const cipher = crypto.createCipheriv(algorithm, encKey, iv);
   let ciphertext = '';
   ciphertext += cipher.update(text, 'utf-8', 'binary');
@@ -37,20 +41,22 @@ const encrypt = async (encKey, text, ivBase64 = null) => {
   return cipherBundle;
 };
 
-const encryptObject = async (encKey, obj, ivBase64 = null) => {
-  const objWithValuesEncrypted = await transformValues(obj, async (value) => {
+const encryptObject = (encKey, obj, ivBase64) => {
+  const objWithValuesEncrypted = transformValues(obj, (value) => {
     return encrypt(encKey, value.toString(), ivBase64);
   });
   return objWithValuesEncrypted;
 };
 
 const encryptJSON = async (encKey, text, ivBase64 = null) => {
-  const result = await encryptObject(encKey, JSON.parse(text), ivBase64);
+  ivBase64 = ivBase64 || await generateIV('base64')
+  const result = encryptObject(encKey, JSON.parse(text), ivBase64);
   return JSON.stringify(result, 0, 2);
 };
 
 const encryptYAML = async (encKey, text, ivBase64 = null) => {
-  const result = await encryptObject(encKey, YAML.parse(text), ivBase64);
+  ivBase64 = ivBase64 || await generateIV('base64')
+  const result = encryptObject(encKey, YAML.parse(text), ivBase64);
   return YAML.stringify(result, 0, 2);
 };
 
