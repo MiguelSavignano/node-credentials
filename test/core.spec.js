@@ -9,13 +9,13 @@ describe('core', () => {
   let credentials = { key: 'value' };
   let credentialsString = JSON.stringify(credentials);
 
-  test('encrypt', async () => {
-    const result = await core.encrypt(NODE_MASTER_KEY, credentialsString);
+  test('encrypt', () => {
+    const result = core.encrypt(NODE_MASTER_KEY, credentialsString, "SlFF0O9iHgKpcds+/6nbEg==");
     expect(result).validEncrypted();
   });
 
-  test('encrypt with any key length', async () => {
-    const result = await core.encrypt(SHORT_NODE_MASTER_KEY, credentialsString);
+  test('encrypt with any key length', () => {
+    const result = core.encrypt(SHORT_NODE_MASTER_KEY, credentialsString, "SlFF0O9iHgKpcds+/6nbEg==");
     expect(result).validEncrypted();
   });
 
