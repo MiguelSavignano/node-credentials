@@ -1,3 +1,7 @@
+### v1.2.0
+
+- Allow use credentials yaml file with [yaml merge key](https://yaml.org/type/merge.html)
+
 ### v1.1.0
 
 - Allow use credentials file with yaml sintax
