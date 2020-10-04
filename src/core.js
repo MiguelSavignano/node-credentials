@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const YAML = require('yaml');
-const { transformValues } = require('./transformValues');
+const { transformValues, deepValuesYAMLDoc } = require('./transformValues');
 
 YAML.defaultOptions.merge = true;
 const algorithm = 'aes-256-cbc';
@@ -21,23 +21,26 @@ const generateValidKey = (baseKey) => {
   return hash.digest();
 };
 
-const encrypt = async (encKey, text, ivBase64 = null) => {
+const encrypt = (encKey, text, ivBase64) => {
   if (isInvalidKey(encKey)) {
     encKey = generateValidKey(encKey);
   }
 
-  const iv = ivBase64 ? new Buffer.from(ivBase64, 'base64') : await generateIV();
+  const iv = new Buffer.from(ivBase64, 'base64');
   const cipher = crypto.createCipheriv(algorithm, encKey, iv);
   let ciphertext = '';
   ciphertext += cipher.update(text, 'utf-8', 'binary');
   ciphertext += cipher.final('binary');
   ciphertext = new Buffer.from(ciphertext, 'binary');
   const cipherBundle = [ciphertext.toString('base64'), iv.toString('base64')].join('--');
+  // console.log(cipherBundle)
 
   return cipherBundle;
 };
 
 const encryptObject = async (encKey, obj, ivBase64 = null) => {
+  ivBase64 = ivBase64 || (await generateIV()).toString('base64')
+
   const objWithValuesEncrypted = await transformValues(obj, async (value) => {
     return encrypt(encKey, value.toString(), ivBase64);
   });
@@ -50,8 +53,17 @@ const encryptJSON = async (encKey, text, ivBase64 = null) => {
 };
 
 const encryptYAML = async (encKey, text, ivBase64 = null) => {
-  const result = await encryptObject(encKey, YAML.parse(text), ivBase64);
-  return YAML.stringify(result, 0, 2);
+  const base64IV = ivBase64 || (await generateIV()).toString('base64')
+
+// https://eemeli.org/yaml/#documents
+// Document.Parsed
+  const doc = YAML.parseDocument(text, { merge: false });
+  doc.contents.items.map(item => {
+    deepValuesYAMLDoc(item, (value) => {
+      return encrypt(encKey, `${value}`, base64IV);
+    })
+  })
+  return doc.toString();
 };
 
 const decrypt = (encKey, text) => {
@@ -96,4 +108,4 @@ const newKey = () => {
   return crypto.randomBytes(16).toString('hex');
 };
 
-module.exports = { newKey, encrypt, decryptJSON, decrypt, encryptJSON, encryptYAML, decryptYAML };
+module.exports = { generateIV, newKey, encrypt, decryptJSON, decrypt, encryptJSON, encryptYAML, decryptYAML };

@@ -43,50 +43,42 @@ const transformValues = (object, fnc) => {
   }, {});
 };
 
-const yAMLDocResolveSubTypes = (item) => {
+// https://eemeli.org/yaml/#documents
+// Document.Parsed
+const deepValuesYAMLDoc = (item, fnc) => {
   if (item.type === "MAP") { // item Array
     return item.items.forEach(item2 => {
-      return yAMLDocResolveSubTypes(item2)
+      return deepValuesYAMLDoc(item2, fnc)
     })
   }
 
   if (item.value.type === "QUOTE_DOUBLE") { // value String
-    item.value.value = `${item.value.value} encrpted`
+    item.value.value = fnc(item.value.value)
     return true
   }
 
   if (item.value.type === "PLAIN") { // value number
-    item.value.value = `${item.value.value} encrypted`
+    item.value.value = fnc(item.value.value)
     return true
   }
 
   if (item.value.type === "MAP") { // value object
     return item.value.items.forEach(item2 => {
-      return yAMLDocResolveSubTypes(item2)
+      return deepValuesYAMLDoc(item2, fnc)
     })
   }
 
   if (item.value.type === "ALIAS") {
     return true
   }
+
   if (item.value.type === "SEQ") {
     return item.value.items.forEach(item2 => {
-      yAMLDocResolveSubTypes(item2)
+      deepValuesYAMLDoc(item2, fnc)
     })
   }
   // console.log(item.value.type)
 }
 
-// https://eemeli.org/yaml/#documents
-// Document.Parsed
-const transformYAMLDocValues = (text, fnc) => {
-  const doc = YAML.parseDocument(text, { merge: false });
-  return new Promise(async (resolve, reject) => {
-    doc.contents.items.forEach(item => {
-      yAMLDocResolveSubTypes(item)
-    })
-    resolve(doc);
-  });
-};
 
-module.exports = { transformValues, transformYAMLDocValues, isPromiseOrAsync, isObject, resolveSubTypes };
+module.exports = { transformValues, deepValuesYAMLDoc, isPromiseOrAsync, isObject, resolveSubTypes };
