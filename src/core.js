@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const YAML = require('yaml');
-const { transformValues } = require('./transformValues');
+const { transformValues, deepValuesYAMLDoc } = require('./transformValues');
 
 YAML.defaultOptions.merge = true;
 const algorithm = 'aes-256-cbc';
@@ -37,6 +37,7 @@ const encrypt = (encKey, text, ivBase64) => {
   ciphertext += cipher.final('binary');
   ciphertext = new Buffer.from(ciphertext, 'binary');
   const cipherBundle = [ciphertext.toString('base64'), iv.toString('base64')].join('--');
+  // console.log(cipherBundle)
 
   return cipherBundle;
 };
@@ -54,10 +55,17 @@ const encryptJSON = async (encKey, text, ivBase64 = null) => {
   return JSON.stringify(result, 0, 2);
 };
 
+// https://eemeli.org/yaml/#documents
 const encryptYAML = async (encKey, text, ivBase64 = null) => {
   ivBase64 = ivBase64 || await generateIV('base64')
-  const result = encryptObject(encKey, YAML.parse(text), ivBase64);
-  return YAML.stringify(result, 0, 2);
+  const doc = YAML.parseDocument(text, { merge: false });
+  doc.contents.items.forEach(item => {
+    deepValuesYAMLDoc(item, (value) => {
+      if (value === null) return value
+      return encrypt(encKey, value.toString(), ivBase64);
+    })
+  })
+  return doc.toString();
 };
 
 const decrypt = (encKey, text) => {
@@ -94,12 +102,21 @@ const decryptJSON = (encKey, text) => {
 };
 
 const decryptYAML = (encKey, text) => {
-  const [objWithValuesDecrypted, lastIv] = decryptObject(encKey, YAML.parse(text));
-  return [YAML.stringify(objWithValuesDecrypted, 0, 2), lastIv];
+  const doc = YAML.parseDocument(text, { merge: false });
+  doc.contents.items.forEach(item => {
+    deepValuesYAMLDoc(item, (value) => {
+      if (value === null) return value
+
+      let [plaintext, iv] = decrypt(encKey, value);
+      lastIv = iv;
+      return plaintext;
+    })
+  })
+  return [doc.toString(), lastIv];
 };
 
 const newKey = () => {
   return crypto.randomBytes(16).toString('hex');
 };
 
-module.exports = { newKey, encrypt, decryptJSON, decrypt, encryptJSON, encryptYAML, decryptYAML };
+module.exports = { generateIV, newKey, encrypt, decryptJSON, decrypt, encryptJSON, encryptYAML, decryptYAML };

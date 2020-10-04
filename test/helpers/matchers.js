@@ -9,7 +9,7 @@ expect.extend({
     const pass = validEncrypted(value);
     return {
       pass,
-      message: () => (pass ? `valid encrypted length: ${value.length}` : `invalid encrypted length: ${value.length}`),
+      message: () => (pass ? `valid encrypted length: ${value.length}` : `invalid encrypted length: ${value.length} [${value}]`),
     };
   },
 });
