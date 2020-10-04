@@ -5,11 +5,15 @@ const { transformValues, deepValuesYAMLDoc } = require('./transformValues');
 YAML.defaultOptions.merge = true;
 const algorithm = 'aes-256-cbc';
 
-const generateIV = () =>
+const generateIV = (format = null) =>
   new Promise((resolve, reject) => {
     crypto.pseudoRandomBytes(16, (err, iv) => {
       if (err) reject(err);
-      resolve(iv);
+      if (format) {
+        resolve(iv.toString(format));
+      } else {
+        resolve(iv);
+      }
     });
   });
 
@@ -38,25 +42,22 @@ const encrypt = (encKey, text, ivBase64) => {
   return cipherBundle;
 };
 
-const encryptObject = async (encKey, obj, ivBase64 = null) => {
-  ivBase64 = ivBase64 || (await generateIV()).toString('base64')
-
-  const objWithValuesEncrypted = await transformValues(obj, async (value) => {
+const encryptObject = (encKey, obj, ivBase64) => {
+  const objWithValuesEncrypted = transformValues(obj, (value) => {
     return encrypt(encKey, value.toString(), ivBase64);
   });
   return objWithValuesEncrypted;
 };
 
 const encryptJSON = async (encKey, text, ivBase64 = null) => {
-  const result = await encryptObject(encKey, JSON.parse(text), ivBase64);
+  ivBase64 = ivBase64 || await generateIV('base64')
+  const result = encryptObject(encKey, JSON.parse(text), ivBase64);
   return JSON.stringify(result, 0, 2);
 };
 
-const encryptYAML = async (encKey, text, ivBase64 = null) => {
-  const base64IV = ivBase64 || (await generateIV()).toString('base64')
-
 // https://eemeli.org/yaml/#documents
-// Document.Parsed
+const encryptYAML = async (encKey, text, ivBase64 = null) => {
+  ivBase64 = ivBase64 || await generateIV('base64')
   const doc = YAML.parseDocument(text, { merge: false });
   doc.contents.items.map(item => {
     deepValuesYAMLDoc(item, (value) => {
