@@ -5,6 +5,7 @@
   "main": "src/index.js",
   "bin": "bin/node-credentials.js",
   "scripts": {
+    "debug": "node --inspect-brk test/console.js",
     "test": "jest  --reporters=default --reporters=jest-junit --collect-coverage"
   },
   "repository": "https://github.com/MiguelSavignano/node-credentials",
