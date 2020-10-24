@@ -3,6 +3,9 @@ const core = require('../src/core');
 const yaml = `
 public_key: value #no-encrypt
 secret: value2
+data2:
+ - name: name # no-encrypt
+   password: mypassword
 data:
  - data1
  - data2 # no-encrypt
