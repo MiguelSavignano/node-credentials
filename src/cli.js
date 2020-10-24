@@ -64,16 +64,16 @@ const help = () => {
         { name: 'help', summary: 'help' },
         {
           name: 'init',
-          summary: 'create credentials.json.key and encrypt your credentials.json',
+          summary: 'encrypt your credentials file and create a credentials key file',
         },
-        { name: 'encrypt', summary: 'encrypt credentials.json' },
-        { name: 'decrypt', summary: 'decrypt credentials.json' },
-        { name: 'edit', summary: 'decrypt/encrypt' },
+        { name: 'encrypt', summary: 'encrypt credentials file' },
+        { name: 'decrypt', summary: 'decrypt credentials file' },
+        { name: 'edit', summary: 'decrypt/encrypt in text editor' },
       ],
     },
     {
       header: 'Options',
-      content: [{ name: '-p, --path', summary: 'Path for credentials.json file' }],
+      content: [{ name: '-p, --path', summary: 'Path for credentials file' }],
     },
   ];
   const usage = commandLineUsage(sections);

@@ -13,34 +13,29 @@ npm install node-credentials --save
 
 ### Encrypt and decrypt json|yaml files
 
-```json
-// credentials.json
-{
-  "username": "user",
-  "password": "myPassword"
-}
+```yaml
+# credentials.yaml
+username: user
+password': myPassword
 ```
 
 - Encrypt
 
 ```
-NODE_MASTER_KEY=$MASTER_KEY npx node-credentials encrypt --path credentials.json
+NODE_MASTER_KEY=$MASTER_KEY npx node-credentials encrypt --path credentials.yaml
 ```
 
 Only encrypted object values.
 
-```json
-{
-  "username": "sGPi7jVJFORTBSOOKx5nMw==--eYed5TIh3D+9rjN/usOB0w==",
-  "password": "+C4M+xFxOQXTyvPJ7QSJuQ==--eYed5TIh3D+9rjN/usOB0w=="
-}
+```yaml
+username: sGPi7jVJFORTBSOOKx5nMw==--eYed5TIh3D+9rjN/usOB0w==
+password: +C4M+xFxOQXTyvPJ7QSJuQ==--eYed5TIh3D+9rjN/usOB0w==
 ```
 
 - Decrypt
 
 ```
-NODE_MASTER_KEY=$MASTER_KEY npx node-credentials decrypt --path credentials.json
-
+NODE_MASTER_KEY=$MASTER_KEY npx node-credentials decrypt --path credentials.yaml
 ```
 
 ## Setup for NodeJs projects
@@ -49,8 +44,17 @@ Create a credentials.json or credentials.yaml file
 
 Example:
 
+```yaml
+publicKey: publicValue # no-encrypt
+myApiKey: apiKey
+myApiSecret: apiSecret
+```
+
+or
+
 ```json
 {
+  "publicKey": "publicValue",
   "myApiKey": "apiKey",
   "myApiSecret": "apiSecret"
 }
@@ -66,12 +70,12 @@ OR use your own key
 NODE_MASTER_KEY=$MASTER_KEY npx node-credentials init
 ```
 
-Your credentials.json it's encrypted, and generate credentials.json.key
+Your credentials file it's encrypted, and generate credentials key file
 
 Save the key value, and ignore this file in your version control.
 
 ```
-echo credentials.json.key >> .gitignore
+echo credentials.yaml.key >> .gitignore
 ```
 
 ### Read credentials in runtime
@@ -103,16 +107,15 @@ EDITOR=nano npx node-credentials edit
 Return the value of credentials based on process.env.NODE_CREDENTIALS_ENV or process.env.NODE_ENV
 Example:
 
-```json
-// credentials.json
-{
-  "development": {
-    "key": "password_development"
-  },
-  "production": {
-    "key": "password_production"
-  }
-}
+```yaml
+default: &default
+  user: myuser
+development:
+  <<: *default
+  key: password_development
+production:
+  <<: *default
+  key: password_production
 ```
 
 - By default use development key
@@ -128,15 +131,10 @@ vault.credentialsEnv;
 
 - Set custom environment
 
-```json
-// credentials.json
-{
-  "us": {
-    "development": {
-      "key": "development password for US country"
-    }
-  }
-}
+```yaml
+us:
+  development:
+    key: development password for US country
 ```
 
 ```
@@ -155,15 +153,10 @@ Some credentials it's not recomend set in credentials file, like production data
 
 credentials file accept template variables for process env object
 
-```json
-// credentials.json
-{
-  "production": {
-    "database": {
-      "password": "<%= process.env.DATABASE_PASSWORD %>"
-    }
-  }
-}
+```yaml
+production:
+  database:
+    password: <%= process.env.DATABASE_PASSWORD %>
 ```
 
 ## CLI API
@@ -172,12 +165,12 @@ credentials file accept template variables for process env object
 Command List
 
   help      help
-  init      create credentials.json.key and encrypt your credentials.json
-  encrypt   encrypt credentials.json
-  decrypt   decrypt credentials.json
+  init      encrypt your credentials file and create a credentials key file
+  encrypt   encrypt credentials file
+  decrypt   decrypt credentials file
   edit      decrypt/encrypt in text editor
 
 Options
 
-  -p, --path   Path for credentials.json file
+  -p, --path   Path for credentials file
 ```
