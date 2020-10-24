@@ -1,3 +1,13 @@
+### v1.3.0
+
+- Use yaml comment to skip encrypt
+  Example:
+
+```yaml
+publicKey: public # no-encrypt
+secretKey: secret
+```
+
 ### v1.2.0
 
 - Allow use credentials yaml file with [yaml merge key](https://yaml.org/type/merge.html)

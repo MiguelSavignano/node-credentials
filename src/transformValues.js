@@ -47,7 +47,7 @@ const transformValues = (object, fnc) => {
 // Document.Parsed
 const deepValuesYAMLDoc = (item, fnc) => {
   if (item.type === "PLAIN") { // Array of String
-    item.value = fnc(item.value)
+    item.value = fnc(item.value, item.comment)
     return true
   }
 
@@ -58,12 +58,12 @@ const deepValuesYAMLDoc = (item, fnc) => {
   }
 
   if (["QUOTE_DOUBLE", "QUOTE_SINGLE"].includes(item.value.type)) { // value String
-    item.value.value = fnc(item.value.value)
+    item.value.value = fnc(item.value.value, item.value.comment)
     return true
   }
 
   if (item.value.type === "PLAIN") { // value number
-    item.value.value = fnc(item.value.value)
+    item.value.value = fnc(item.value.value, item.value.comment)
     return true
   }
 

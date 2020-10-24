@@ -60,8 +60,10 @@ const encryptYAML = async (encKey, text, ivBase64 = null) => {
   ivBase64 = ivBase64 || await generateIV('base64')
   const doc = YAML.parseDocument(text, { merge: false });
   doc.contents.items.forEach(item => {
-    deepValuesYAMLDoc(item, (value) => {
+    deepValuesYAMLDoc(item, (value, comment) => {
       if (value === null) return value
+      if (value === 'data2') debugger
+      if (comment && comment.trim() == "no-encrypt") return value
       return encrypt(encKey, value.toString(), ivBase64);
     })
   })

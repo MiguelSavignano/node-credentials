@@ -53,6 +53,21 @@ describe('core', () => {
     expect(result).toMatchSnapshot();
   });
 
+  test('encryptYAML with no-encrypt comments', async () => {
+    const yaml = `
+    public_key: value #no-encrypt
+    secret: value2
+    data2:
+     - name: name # no-encrypt
+       password: mypassword
+    data:
+     - data1
+     - data2 # no-encrypt
+    `;
+
+    const result = await core.encryptYAML(NODE_MASTER_KEY, yaml, "SlFF0O9iHgKpcds+/6nbEg==");
+    expect(result).toMatchSnapshot();
+  });
   test('decrypt', async () => {
     const [result, iv] = await core.decrypt(
       NODE_MASTER_KEY,
