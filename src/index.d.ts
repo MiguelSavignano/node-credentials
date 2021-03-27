@@ -13,13 +13,13 @@ declare class Vault {
     masterKey?: string;
   });
 
-  credentials: object;
-  credentialsEnv: object;
+  credentials: any;
+  credentialsEnv: any;
   config(options?: IConfigOptions): any;
 }
 declare const vault: Vault;
-declare const credentials: object;
-declare const credentialsEnv: object;
+declare const credentials: any;
+declare const credentialsEnv: any;
 declare const config: (options?: IConfigOptions) => any;
 
 export { credentials, credentialsEnv, config, Vault };
