@@ -1,3 +1,12 @@
+### v1.4.0
+
+Custom master key environment variable [#37](https://github.com/MiguelSavignano/node-credentials/pull/37)
+
+```
+export NODE_MASTER_KEY_NAME=NPM_TOKEN
+NPM_TOKEN=$NPM_TOKEN npx node-credentials init
+```
+
 ### v1.3.0
 
 - Use yaml comment to skip encrypt
