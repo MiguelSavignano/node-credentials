@@ -17,6 +17,32 @@ process.env.NODE_MASTER_KEY = NODE_MASTER_KEY;
 process.env.ENV_CREDENTIAL = MY_ENV_CREDENTIAL;
 
 describe('node-vault', () => {
+  describe('#getMasterKey', () => {
+    test('default value', () => {
+      const { path } = writeTempFile(DECRYPTED_CREDENTIALS);
+      const vault = new Vault({
+        credentialsFilePath: path,
+      });
+
+      expect(vault.getMasterKeyName()).toEqual('NODE_MASTER_KEY');
+      fs.unlinkSync(path);
+    });
+
+    test('set custom value value', () => {
+      process.env.NPM_TOKEN = '8aa93853b3ff01c5b5447529a9c33cb9'
+      process.env.NODE_MASTER_KEY_NAME = 'NPM_TOKEN'
+      const { path } = writeTempFile(DECRYPTED_CREDENTIALS);
+      const vault = new Vault({
+        credentialsFilePath: path,
+      });
+
+      expect(vault.getMasterKeyName()).toEqual('NPM_TOKEN');
+      fs.unlinkSync(path);
+      delete process.env.NODE_MASTER_KEY_NAME
+      delete process.env.NPM_TOKEN
+    });
+  });
+
   test('encryptFile', async () => {
     const { path } = writeTempFile(DECRYPTED_CREDENTIALS);
 
