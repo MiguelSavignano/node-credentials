@@ -159,6 +159,17 @@ production:
     password: <%= process.env.DATABASE_PASSWORD %>
 ```
 
+### Custom master key environment variable
+
+Allow set custom environment variable to encrypt/decrypt secrets
+
+Example using `NPM_TOKEN`
+
+```
+export NODE_MASTER_KEY_NAME=NPM_TOKEN
+NPM_TOKEN=$NPM_TOKEN npx node-credentials init
+```
+
 ## CLI API
 
 ```
