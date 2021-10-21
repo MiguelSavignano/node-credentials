@@ -123,7 +123,7 @@ class Vault {
     try {
       return (
         this.masterKey ||
-        process.env.NODE_MASTER_KEY ||
+        process.env[this.getMasterKeyName()] ||
         fs.readFileSync(`${this.credentialsFilePath}.key`, 'utf8').trim()
       );
     } catch (e) {
@@ -132,6 +132,10 @@ class Vault {
       }
       return undefined;
     }
+  }
+
+  getMasterKeyName() {
+    return process.env.NODE_MASTER_KEY_NAME || 'NODE_MASTER_KEY'
   }
 }
 module.exports.Vault = Vault;
