@@ -1,3 +1,7 @@
+### v1.4.1
+
+Fix decrypt credentials.yaml with `no-encrypt` comments [#38](https://github.com/MiguelSavignano/node-credentials/pull/38)
+
 ### v1.4.0
 
 Custom master key environment variable [#37](https://github.com/MiguelSavignano/node-credentials/pull/37)
