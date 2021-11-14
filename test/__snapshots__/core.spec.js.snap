@@ -1,5 +1,20 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`core decryptYAML with no-encrypt comments 1`] = `
+Array [
+  "public_key: value #no-encrypt
+secret: value2
+data2:
+  - name: name # no-encrypt
+    password: mypassword
+data:
+  - data1
+  - data2 # no-encrypt
+",
+  "ddezOk3Wwy95zJU0L9FSiQ==",
+]
+`;
+
 exports[`core encryptYAML with merge keys 1`] = `
 "source:
   &base
