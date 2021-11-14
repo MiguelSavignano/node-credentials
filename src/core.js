@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const YAML = require('yaml');
 const { transformValues, deepValuesYAMLDoc } = require('./transformValues');
+const NO_ENCRYPT_COMMENT = "no-encrypt"
 
 YAML.defaultOptions.merge = true;
 const algorithm = 'aes-256-cbc';
@@ -62,8 +63,7 @@ const encryptYAML = async (encKey, text, ivBase64 = null) => {
   doc.contents.items.forEach(item => {
     deepValuesYAMLDoc(item, (value, comment) => {
       if (value === null) return value
-      if (value === 'data2') debugger
-      if (comment && comment.trim() == "no-encrypt") return value
+      if (comment && comment.trim() == NO_ENCRYPT_COMMENT) return value
       return encrypt(encKey, value.toString(), ivBase64);
     })
   })
@@ -106,8 +106,11 @@ const decryptJSON = (encKey, text) => {
 const decryptYAML = (encKey, text) => {
   const doc = YAML.parseDocument(text, { merge: false });
   doc.contents.items.forEach(item => {
-    deepValuesYAMLDoc(item, (value) => {
+    deepValuesYAMLDoc(item, (value, comment) => {
       if (value === null) return value
+      if (comment && comment.trim() == NO_ENCRYPT_COMMENT) {
+        return value
+      }
 
       let [plaintext, iv] = decrypt(encKey, value);
       lastIv = iv;

@@ -68,6 +68,23 @@ describe('core', () => {
     const result = await core.encryptYAML(NODE_MASTER_KEY, yaml, "SlFF0O9iHgKpcds+/6nbEg==");
     expect(result).toMatchSnapshot();
   });
+
+  test('decryptYAML with no-encrypt comments', () => {
+    const yaml = `
+    public_key: value #no-encrypt
+    secret: nrAsTeEg9/vYwNLKeTSDcQ==--ddezOk3Wwy95zJU0L9FSiQ==
+    data2:
+      - name: name # no-encrypt
+        password: T0aRVXiI9dS2/KBQ8K4xug==--ddezOk3Wwy95zJU0L9FSiQ==
+    data:
+      - h4Iz7kBLKroCy9J4WdyhbA==--ddezOk3Wwy95zJU0L9FSiQ==
+      - data2 # no-encrypt
+    `;
+
+    const result = core.decryptYAML(NODE_MASTER_KEY, yaml);
+    expect(result).toMatchSnapshot();
+  });
+
   test('decrypt', async () => {
     const [result, iv] = await core.decrypt(
       NODE_MASTER_KEY,
