@@ -11,7 +11,7 @@ npm install node-credentials --save
 
 ## Usage
 
-### Encrypt and decrypt json|yaml files
+### Encrypt and decrypt json|yaml|.env files
 
 ```yaml
 # credentials.yaml
@@ -168,6 +168,18 @@ Example using `NPM_TOKEN`
 ```
 export NODE_MASTER_KEY_NAME=NPM_TOKEN
 NPM_TOKEN=$NPM_TOKEN npx node-credentials init
+```
+
+## Encrypt or decrypt any file
+
+```
+NODE_MASTER_KEY=$MASTER_KEY npx node-credentials encrypt --path .env
+NODE_MASTER_KEY=$MASTER_KEY npx node-credentials decrypt --path .env
+```
+
+```
+NODE_MASTER_KEY=$MASTER_KEY npx node-credentials encrypt --path myfile.txt
+NODE_MASTER_KEY=$MASTER_KEY npx node-credentials decrypt --path myfile.txt
 ```
 
 ## CLI API
