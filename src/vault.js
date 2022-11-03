@@ -1,3 +1,4 @@
+const dotenv = require('dotenv');
 const YAML = require('yaml');
 const { get } = require('lodash');
 const fs = require('fs');
@@ -51,7 +52,13 @@ class Vault {
     if (/^.*\.(json)$/.test(this.credentialsFilePath)) {
       return 'json';
     }
-    return 'yaml';
+    if (/^.*\.(env)$/.test(this.credentialsFilePath)) {
+      return 'env';
+    }
+    if (/^.*\.(yaml)$/.test(this.credentialsFilePath)) {
+      return 'yaml';
+    }
+    return null;
   }
 
   _getAdapter(decryptFnc, encryptFnc) {
@@ -61,8 +68,10 @@ class Vault {
       return { parser: JSON, decryptFnc: core.decryptJSON, encryptFnc: core.encryptJSON };
     } else if (this.format === 'yaml') {
       return { parser: YAML, decryptFnc: core.decryptYAML, encryptFnc: core.encryptYAML };
+    } else if (this.format === 'env') {
+      return { parser: dotenv, decryptFnc: core.decryptDotEnv, encryptFnc: core.encryptDotenv };
     } else {
-      return { parser: JSON, decryptFnc: core.decrypt, encryptFnc: core.encrypt };
+      return { parser: { parse(value) { return value } }, decryptFnc: core.decrypt, encryptFnc: core.encrypt };
     }
   }
 
@@ -89,13 +98,13 @@ class Vault {
   async encryptFile() {
     const masterKey = this.getMasterKey(true);
     const text = fs.readFileSync(this.credentialsFilePath, 'utf8').trim();
-    let iv;
+    let ivBase64;
     try {
-      iv = fs.readFileSync(`${this.credentialsFilePath}.iv`, 'utf8').trim();
+      ivBase64 = fs.readFileSync(`${this.credentialsFilePath}.iv`, 'utf8').trim();
     } catch {
-      iv = null;
+      ivBase64 = await core.generateIV('base64');
     }
-    const cipherBundle = await this.encryptFnc(masterKey, text, iv);
+    const cipherBundle = await this.encryptFnc(masterKey, text, ivBase64);
     fs.writeFileSync(`${this.credentialsFilePath}`, cipherBundle);
     try {
       fs.unlinkSync(`${this.credentialsFilePath}.iv`, 'utf8');

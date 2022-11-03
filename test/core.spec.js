@@ -9,6 +9,19 @@ describe('core', () => {
   let credentials = { key: 'value' };
   let credentialsString = JSON.stringify(credentials);
 
+  describe('dotenv format', () => {
+    it('encryp and decrypt', async() => {
+      const dotEnv = `
+        DOCKER_USER=docker
+        DOCKER_PASSWORD=my-password
+      `
+      const encryptResult = await core.encryptDotenv(NODE_MASTER_KEY, dotEnv);
+      expect(encryptResult).validEncrypted();
+      const [result] = core.decryptDotEnv(NODE_MASTER_KEY, encryptResult);
+      expect(result).toEqual('DOCKER_USER=docker\nDOCKER_PASSWORD=my-password');
+    })
+  });
+
   test('encrypt', () => {
     const result = core.encrypt(NODE_MASTER_KEY, credentialsString, "SlFF0O9iHgKpcds+/6nbEg==");
     expect(result).validEncrypted();
