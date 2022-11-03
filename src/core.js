@@ -1,5 +1,7 @@
 const crypto = require('crypto');
 const YAML = require('yaml');
+const dotenv = require('dotenv');
+const { jsonToDotEnv } = require('./dotenv');
 const { transformValues, deepValuesYAMLDoc } = require('./transformValues');
 const NO_ENCRYPT_COMMENT = "no-encrypt"
 
@@ -56,6 +58,12 @@ const encryptJSON = async (encKey, text, ivBase64 = null) => {
   return JSON.stringify(result, 0, 2);
 };
 
+const encryptDotenv = async (encKey, text, ivBase64 = null) => {
+  ivBase64 = ivBase64 || await generateIV('base64')
+  const result = encryptObject(encKey, dotenv.parse(text), ivBase64);
+  return jsonToDotEnv(result);
+};
+
 // https://eemeli.org/yaml/#documents
 const encryptYAML = async (encKey, text, ivBase64 = null) => {
   ivBase64 = ivBase64 || await generateIV('base64')
@@ -98,6 +106,11 @@ const decryptObject = (encKey, obj) => {
   return [objWithValuesDecrypted, lastIv];
 };
 
+const decryptDotEnv = (encKey, text) => {
+  const [objWithValuesDecrypted, lastIv] = decryptObject(encKey, dotenv.parse(text));
+  return [jsonToDotEnv(objWithValuesDecrypted), lastIv];
+};
+
 const decryptJSON = (encKey, text) => {
   const [objWithValuesDecrypted, lastIv] = decryptObject(encKey, JSON.parse(text));
   return [JSON.stringify(objWithValuesDecrypted, 0, 2), lastIv];
@@ -124,4 +137,4 @@ const newKey = () => {
   return crypto.randomBytes(16).toString('hex');
 };
 
-module.exports = { generateIV, newKey, encrypt, decryptJSON, decrypt, encryptJSON, encryptYAML, decryptYAML };
+module.exports = { generateIV, newKey, encrypt, decryptJSON, decrypt, encryptDotenv, decryptDotEnv, encryptJSON, encryptYAML, decryptYAML };
