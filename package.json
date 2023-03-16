@@ -1,6 +1,6 @@
 {
   "name": "node-credentials",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "Encrypted json for manage all credentials, similar to rails encrypted secrets",
   "main": "src/index.js",
   "bin": "bin/node-credentials.js",
