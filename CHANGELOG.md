@@ -1,3 +1,8 @@
+### v1.5.0
+
+Fix all npm vulnerabilities [#51](https://github.com/MiguelSavignano/node-credentials/pull/51)
+Fix deprecated crypto warning [#50](https://github.com/MiguelSavignano/node-credentials/pull/50)
+
 ### v1.4.1
 
 Fix decrypt credentials.yaml with `no-encrypt` comments [#38](https://github.com/MiguelSavignano/node-credentials/pull/38)
