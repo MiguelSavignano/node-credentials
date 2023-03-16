@@ -19,7 +19,6 @@
   "dependencies": {
     "command-line-args": "^5.0.2",
     "command-line-usage": "^5.0.5",
-    "crypto": "^1.0.1",
     "dotenv": "^16.0.3",
     "ejs": "^2.6.1",
     "yaml": "^1.10.0"
