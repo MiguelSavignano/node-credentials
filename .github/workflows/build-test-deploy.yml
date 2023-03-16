@@ -20,7 +20,7 @@ jobs:
       - name: Set up Nodejs  ${{ matrix.version }}
         uses: actions/setup-node@master
         with:
-          version:  ${{ matrix.version }}
+          node-version:  ${{ matrix.version }}
       - name: Build
         run: npm ci
 
