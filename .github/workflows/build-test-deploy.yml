@@ -8,17 +8,19 @@ on:
       - v*
 
 jobs:
-  build:
+  test_matrix:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        version: [10, 12, 14]
     steps:
       - uses: actions/checkout@v1
 
-      - name: Set up Nodejs 10.16.3
+      - name: Set up Nodejs  ${{ matrix.version }}
         uses: actions/setup-node@master
         with:
-          version: 10.16.3
-
+          version:  ${{ matrix.version }}
       - name: Build
         run: npm ci
 
@@ -29,6 +31,20 @@ jobs:
         if: always()
         with:
           access-token: ${{ secrets.GITHUB_TOKEN }}
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Set up Nodejs 10.x
+        uses: actions/setup-node@master
+        with:
+          version: 10
+
+      - name: Build
+        run: npm ci
 
       - name: Publish to Npm
         if: contains(github.ref, 'refs/tags/v')
