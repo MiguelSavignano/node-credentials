@@ -31,7 +31,7 @@ jobs:
         if: always()
         with:
           access-token: ${{ secrets.GITHUB_TOKEN }}
-          check-name: Jest ${{ matrix.version }}
+          check-name: Jest test with node-version ${{ matrix.version }}
 
   build:
     needs: test_matrix
