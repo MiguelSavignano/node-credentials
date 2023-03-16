@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        version: [8, 10, 12, 14, 16, 18]
+        version: [10, 12, 14, 16, 18]
     steps:
       - uses: actions/checkout@v1
 
