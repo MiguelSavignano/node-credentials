@@ -1,4 +1,4 @@
-### v1.5.0
+### v1.6.0
 
 Fix all npm vulnerabilities [#51](https://github.com/MiguelSavignano/node-credentials/pull/51)
 Fix deprecated crypto warning [#50](https://github.com/MiguelSavignano/node-credentials/pull/50)
