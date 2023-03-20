@@ -49,13 +49,13 @@ class Vault {
   }
 
   _inferFormat() {
-    if (/^.*\.(json)$/.test(this.credentialsFilePath)) {
+    if (/^.*\.(json)/.test(this.credentialsFilePath)) {
       return 'json';
     }
-    if (/^.*\.(env)$/.test(this.credentialsFilePath)) {
+    if (/^.*\.(env)/.test(this.credentialsFilePath)) {
       return 'env';
     }
-    if (/^.*\.(yaml)$/.test(this.credentialsFilePath)) {
+    if (/^.*\.(yaml|yml)/.test(this.credentialsFilePath)) {
       return 'yaml';
     }
     return null;
