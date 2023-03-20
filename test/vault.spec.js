@@ -43,6 +43,31 @@ describe('node-vault', () => {
     });
   });
 
+  describe.only('#_inferFormat', () => {
+    [
+      {
+        expectedFormat: 'yaml',
+        fileExtensions: ['yml', 'yaml', 'enc.yaml', 'yaml.enc']
+      },
+      {
+        expectedFormat: 'json',
+        fileExtensions: ['json', 'enc.json', 'json.enc']
+      },
+      {
+        expectedFormat: 'env',
+        fileExtensions: ['env', 'enc.env', 'env.enc', 'envrc', 'envrc.enc']
+      }
+    ].forEach(({expectedFormat, fileExtensions}) => {
+        fileExtensions.forEach(fileExtension => {
+        test(`detect ${fileExtension}`, () => {
+          const vault = new Vault({ credentialsFilePath: `credentials.${fileExtension}` });
+
+          expect(vault.format).toEqual(expectedFormat);
+        });
+      })
+    })
+  })
+
   test('encryptFile', async () => {
     const { path } = writeTempFile(DECRYPTED_CREDENTIALS);
 
