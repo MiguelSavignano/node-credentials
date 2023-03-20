@@ -19,4 +19,25 @@ const editContentInEditor = (content) => {
     });
   });
 };
+
+async function onEditContentInEditor(filePath, callback) {
+  const content = fs.readFileSync(filePath, 'utf-8');
+  const editor = process.env.EDITOR || defaultEditor;
+
+  const uuid = new Date().getTime();
+  const tempFileName = `/tmp/${uuid}`;
+  fs.writeFileSync(tempFileName, content);
+
+  const shell = spawn(editor, [tempFileName], { stdio: 'inherit' });
+
+  shell.on('close', async (code) => {
+    const tmpContent = fs.readFileSync(tempFileName, 'utf-8');
+    const result = await callback(tmpContent);
+    fs.unlinkSync(tempFileName);
+    fs.writeFileSync(filePath, result);
+  });
+}
+
+
 exports.editContentInEditor = editContentInEditor;
+exports.onEditContentInEditor = onEditContentInEditor;
