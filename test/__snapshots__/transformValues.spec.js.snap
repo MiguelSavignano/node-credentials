@@ -1,17 +1,17 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`core transformValues async 1`] = `
-Object {
+{
   "apikey": "1234 MOCK",
-  "complex": Array [
-    Array [
+  "complex": [
+    [
       "1 MOCK",
-      Object {
-        "data": Array [
-          Object {
+      {
+        "data": [
+          {
             "a": "4 MOCK",
-            "b": Array [
-              Array [
+            "b": [
+              [
                 "8 MOCK",
               ],
             ],
@@ -20,30 +20,30 @@ Object {
       },
     ],
   ],
-  "config": Array [
-    Object {
+  "config": [
+    {
       "data": "data MOCK",
     },
-    Object {
+    {
       "data": "data2 MOCK",
     },
     "12345 MOCK",
     "78 MOCK",
   ],
   "data2": null,
-  "database": Object {
+  "database": {
     "password": "12345 MOCK",
     "user": "1234 MOCK",
   },
   "error": null,
-  "errors": Array [
-    Array [
+  "errors": [
+    [
       "1 MOCK",
       "2 MOCK",
       "3 MOCK",
     ],
   ],
-  "keys": Array [
+  "keys": [
     "1234 MOCK",
     "123 MOCK",
   ],
@@ -52,17 +52,17 @@ Object {
 `;
 
 exports[`core transformValues sync 1`] = `
-Object {
+{
   "apikey": "1234 MOCK",
-  "complex": Array [
-    Array [
+  "complex": [
+    [
       "1 MOCK",
-      Object {
-        "data": Array [
-          Object {
+      {
+        "data": [
+          {
             "a": "4 MOCK",
-            "b": Array [
-              Array [
+            "b": [
+              [
                 "8 MOCK",
               ],
             ],
@@ -71,30 +71,30 @@ Object {
       },
     ],
   ],
-  "config": Array [
-    Object {
+  "config": [
+    {
       "data": "data MOCK",
     },
-    Object {
+    {
       "data": "data2 MOCK",
     },
     "12345 MOCK",
     "78 MOCK",
   ],
   "data2": null,
-  "database": Object {
+  "database": {
     "password": "12345 MOCK",
     "user": "1234 MOCK",
   },
   "error": null,
-  "errors": Array [
-    Array [
+  "errors": [
+    [
       "1 MOCK",
       "2 MOCK",
       "3 MOCK",
     ],
   ],
-  "keys": Array [
+  "keys": [
     "1234 MOCK",
     "123 MOCK",
   ],
