@@ -3,7 +3,7 @@ name: Npm package
 on:
   push:
     branches:
-      - "*"
+      - "**"
     tags:
       - v*
 
